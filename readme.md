@@ -3,7 +3,39 @@ The following was discovered as part of building this project:
 
 * The original package name 'com.ti.demo.spring-six-starter' is invalid and this project uses 'com.ti.demo.springsixstarter' instead.
 
+---
+
 # Getting Started
+
+## Spring Boot Actuator
+
+- Use `management.endpoints.web.exposure.include` to expose actuator endpoints
+  - Use `*` for all or else use comma delimited list like `health,info`
+  - For info, we also need to add `management.info.env.enabled=true`
+  - Then all `info.xxx` props will show up in the info response
+- We can also use `management.endpoints.web.exposure.exclude` to exclude endpoints
+- Just hitting `/actuator` gives all the available endpoints
+
+## Spring Boot Security
+
+- Adding the dependency will put all endpoints under login
+- Default username is `user` and password gets generated in the console at startup
+  - we can override this using `spring.security.user` properties
+  - Spring security will auto-redirect to `/login` on browsers
+  - You can also specify the username and password as basic auth on API requests
+  - This will let you make the authenticated API requests
+- We can create an `AppSecurityConfig` class to permit or authenticate specific requests using `SecurityFilterChain`
+  - if you do this, spring security will not redirect to login and basic auth will also not work
+  - disbaling this config class for now
+- Once logged in, it will maintain credentials in session so use Incognito to test login
+
+## Application props
+
+- You can set logging levels for specific packages by `logging.level.package=LOGLEVEL`
+  - LOGLEVEL can be `TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF`
+  - You can save logs using `logging.file.name` and `logging.file.path` properties
+
+---
 
 ### Reference Documentation
 For further reference, please consider the following sections:
