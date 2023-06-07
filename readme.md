@@ -35,6 +35,16 @@ The following was discovered as part of building this project:
   - LOGLEVEL can be `TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF`
   - You can save logs using `logging.file.name` and `logging.file.path` properties
 
+## ComponentScan
+
+- by default, `@SpringBootApplication` scans everything under the currenct package recursively
+- if we want to use other stuff from outside, we need `@ComponentScan`
+- we can also directly add `scanBasePackages` inside `@SpringBootApplication` with a comma delimited list like `{"pkg1", "pkg2" ...}`
+
+## Autowiring & Dependency injection
+
+- Check the constructor, setter and field injection in `FirstController.java`
+
 ---
 
 ### Reference Documentation
