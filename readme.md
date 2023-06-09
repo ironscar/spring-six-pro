@@ -44,6 +44,8 @@ The following was discovered as part of building this project:
 ## Autowiring & Dependency injection
 
 - Check the constructor, setter and field injection in `FirstController.java`
+- Marking a bean as primary makes sure that it gets chosen whenever you autowire a bean of that type even without qualifiers but only one can be primary
+- Normally the qualifier ends up being the class name or method name but you can pass a custom one in `@Component`, `@Bean` etc tags
 
 ---
 

@@ -22,11 +22,10 @@ public class FirstController {
 
     /**
      * Field injection example
-     * We specify qualifier to make sure there are no bean conflicts
+     * We don't specify qualifier even though multiple implementations as one of them is Primary
      * It works fine even when its a private variable
      */
     @Autowired
-    @Qualifier("soccer")
     private Coach fieldCoach;
 
     private Map<String, Coach> coachMap;
