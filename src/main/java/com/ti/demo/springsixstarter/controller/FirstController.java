@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/app1")
 public class FirstController {
 
     @Autowired

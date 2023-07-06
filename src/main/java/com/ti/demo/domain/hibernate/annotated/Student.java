@@ -1,4 +1,4 @@
-package com.ti.demo.hibernate.annotated;
+package com.ti.demo.domain.hibernate.annotated;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
