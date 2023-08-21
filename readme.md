@@ -94,23 +94,27 @@ The following was discovered as part of building this project:
   - When we can use the `persist` method of the entity manager to insert object into table as row
   - This also updates the reference of the object inserted to contain the id with which it was inserted if using generatedValue and autoIncrement
 - We can also use `@Transactional` from spring-framework package to make the method transactional
+- To update single entity, we can first use entity manager to find them, update the values of the object and then calling `merge` method of the entity manager with new object to update it in DB
+  - For multiple entities, refer to JPQL section
 
 ### JPQL
 
 - we can use `createQuery("FROM <entityname>")` to make more customized queries and get the results using `getResultList`
   - the entity name uses the name specified in `@Entity` or takes the class name (it is case-sensitive)
-  - the field names are the member names in Java
+  - the field names are the member names in Java and not the column names in SQL so be very careful
 - `createQuery` can use `WHERE, AND, OR, LIKE, ORDER BY` etc as well where params are specified as `:<paramname>` like `:pname`
 - `createQuery` returns an object of type `TypedQuery`
 - Params can be set using `TypedQuery.setParameter(paramName, value)` but should only be set if used
   - if we don't use `:name` then setting `:name` throws exception
 - Setting these parameters are safer than directly setting in the string
+- If setting parameters for `IN` clause for number column, we should use `List<Integer>` for the parameter type
+- For updating multiple entities, we can use `createQuery("UPDATE <entityname> SET)` followed by `executeUpdate()` 
 
-## Http status exceptions
+### Http status exceptions
 
 - We can throw `ResponseStatusException` with specific `HttpStatus` enum value and reason from controller methods as is done in `HibernateAnnotatedController`
   - this includes trace but we can hide that by setting `server.error.include-stacktrace=never` in props
- 
+
 ---
 
 ### Reference Documentation

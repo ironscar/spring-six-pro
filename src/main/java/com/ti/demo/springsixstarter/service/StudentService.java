@@ -40,4 +40,15 @@ public class StudentService {
         log.info("Save student {}", student);
     }
 
+    public void updateStudent(Integer studentId, Student updatedStudent) {
+        studentDao.update(studentId, updatedStudent);
+        log.info("Update student: {}", updatedStudent);
+    }
+
+    public int updateLastNameInBulk(List<Integer> ids, String lname) {
+        int x = studentDao.updateLastNameInBulk(ids, lname);
+        log.info("{} students updated", x);
+        return x;
+    }
+
 }

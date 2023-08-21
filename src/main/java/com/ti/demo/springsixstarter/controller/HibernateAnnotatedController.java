@@ -1,11 +1,14 @@
 package com.ti.demo.springsixstarter.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ti.demo.domain.hibernate.annotated.Student;
 import com.ti.demo.springsixstarter.service.StudentService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/app2/student")
 public class HibernateAnnotatedController {
@@ -47,6 +53,7 @@ public class HibernateAnnotatedController {
                 throw new NullPointerException("Student not found");
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student with specified id not found");
         }
         return student;
@@ -59,7 +66,36 @@ public class HibernateAnnotatedController {
                 studentService.saveStudent(student);
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body cannot be null");
+        }
+    }
+
+    @PutMapping(value = {"", "/"})
+    public void updatedStudent(@RequestBody Student updatedStudent) {
+        try {
+            if (updatedStudent != null && updatedStudent.id != null) {
+                studentService.updateStudent(updatedStudent.getId(), updatedStudent);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body cannot be null and must have id");
+        }
+    }
+
+    @PutMapping(value = {"/bulk"})
+    public void updateStudents(
+        @RequestParam(value = "ids", required = true) String ids,
+        @RequestParam(value = "lname", required = true) String lname) {
+        try {
+            List<Integer> actualIds = Arrays.asList(ids.split(","))
+                .stream()
+                .map(id -> Integer.parseInt(id))
+                .collect(Collectors.toList());
+            studentService.updateLastNameInBulk(actualIds, lname);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids must be valid list of integers");
         }
     }
 

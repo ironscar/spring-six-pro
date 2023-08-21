@@ -54,5 +54,25 @@ public class StudentDaoImpl implements StudentDao {
     public void save(Student student) {
         entityManager.persist(student);
     }
+
+    @Override
+    @Transactional
+    public void update(Integer id, Student updatedStudent) {
+        Student student = find(id);
+        student.setFirstName(updatedStudent.firstName);
+        student.setLastName(updatedStudent.lastName);
+        student.setEmail(updatedStudent.email);
+        entityManager.merge(student);
+    }
+
+    @Override
+    @Transactional
+    public int updateLastNameInBulk(List<Integer> ids, String lname) {
+        return entityManager
+            .createQuery("UPDATE student SET lastName = :lname WHERE id in (:ids)")
+            .setParameter("lname", lname)
+            .setParameter("ids", ids)
+            .executeUpdate();
+    }
     
 }

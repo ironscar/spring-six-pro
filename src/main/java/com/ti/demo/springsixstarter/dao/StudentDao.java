@@ -12,4 +12,8 @@ public interface StudentDao {
     
     void save(Student student);
 
+    void update(Integer id, Student updatedStudent);
+
+    public int updateLastNameInBulk(List<Integer> ids, String lname);
+
 }
