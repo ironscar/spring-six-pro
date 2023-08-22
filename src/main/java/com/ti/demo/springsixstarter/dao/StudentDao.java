@@ -14,10 +14,10 @@ public interface StudentDao {
 
     void update(Integer id, Student updatedStudent);
 
-    public int updateLastNameInBulk(List<Integer> ids, String lname);
+    int updateLastNameInBulk(List<Integer> ids, String lname);
 
     void deleteStudentById(Integer id);
 
-    public int deleteStudents(List<Integer> ids);
+    int deleteStudents(List<Integer> ids);
 
 }
