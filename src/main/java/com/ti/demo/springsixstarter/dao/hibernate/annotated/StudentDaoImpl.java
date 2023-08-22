@@ -74,5 +74,20 @@ public class StudentDaoImpl implements StudentDao {
             .setParameter("ids", ids)
             .executeUpdate();
     }
+
+    @Override
+    @Transactional
+    public void deleteStudentById(Integer id) {
+        entityManager.remove(find(id));
+    }
+
+    @Override
+    @Transactional
+    public int deleteStudents(List<Integer> ids) {
+        return entityManager
+            .createQuery("DELETE FROM student WHERE id IN (:ids)")
+            .setParameter("ids", ids)
+            .executeUpdate();
+    }
     
 }

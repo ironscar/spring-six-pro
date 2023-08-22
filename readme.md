@@ -108,7 +108,11 @@ The following was discovered as part of building this project:
   - if we don't use `:name` then setting `:name` throws exception
 - Setting these parameters are safer than directly setting in the string
 - If setting parameters for `IN` clause for number column, we should use `List<Integer>` for the parameter type
-- For updating multiple entities, we can use `createQuery("UPDATE <entityname> SET)` followed by `executeUpdate()` 
+- For updating multiple entities, we can use `createQuery("UPDATE <entityname> SET)` followed by `executeUpdate()`
+- For delete, it works the same way where `entityManager.remove(Student)` is used to remove one record and `createQuery("DELETE FROM <entityname> WHERE)` followed by `executeUpdate()`
+- Both update and delete using `executeUpdate` returns the number of records updated/deleted
+- We can use `spring.jpa.hibernate.ddl-auto` to create/drop DB tables at app startup/shutdown automatically based on the entities available
+  - values available include `create`, `create-only`, `drop`, `create-drop`, `none` etc
 
 ### Http status exceptions
 

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,19 +73,20 @@ public class HibernateAnnotatedController {
         }
     }
 
-    @PutMapping(value = {"", "/"})
-    public void updatedStudent(@RequestBody Student updatedStudent) {
+    @PutMapping(value = "/{id}")
+    public void updatedStudent(@PathVariable("id") Integer id, @RequestBody Student updatedStudent) {
         try {
-            if (updatedStudent != null && updatedStudent.id != null) {
-                studentService.updateStudent(updatedStudent.getId(), updatedStudent);
+            if (updatedStudent != null && id != null) {
+                updatedStudent.setId(id);
+                studentService.updateStudent(id, updatedStudent);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body cannot be null and must have id");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body and id cannot be null");
         }
     }
 
-    @PutMapping(value = {"/bulk"})
+    @PutMapping(value = {"","/"})
     public void updateStudents(
         @RequestParam(value = "ids", required = true) String ids,
         @RequestParam(value = "lname", required = true) String lname) {
@@ -96,6 +99,28 @@ public class HibernateAnnotatedController {
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids must be valid list of integers");
+        }
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void deleteStudentById(@PathVariable("id") Integer id) {
+        try {
+            studentService.deleteStudentById(id);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be a valid integer");
+        }
+    }
+
+    @DeleteMapping(value = {"", "/"})
+    public void deleteStudents(@RequestBody List<Integer> ids) {
+        try {
+            if (!CollectionUtils.isEmpty(ids)) {
+                studentService.deleteStudents(ids);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be a valid integer");
         }
     }
 

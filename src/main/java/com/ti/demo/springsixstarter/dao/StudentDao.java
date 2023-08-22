@@ -16,4 +16,8 @@ public interface StudentDao {
 
     public int updateLastNameInBulk(List<Integer> ids, String lname);
 
+    void deleteStudentById(Integer id);
+
+    public int deleteStudents(List<Integer> ids);
+
 }

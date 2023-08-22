@@ -51,4 +51,15 @@ public class StudentService {
         return x;
     }
 
+    public void deleteStudentById(Integer id) {
+        log.info("Deleteing student with id {}", id);
+        studentDao.deleteStudentById(id);
+    }
+
+    public int deleteStudents(List<Integer> ids) {
+        int x = studentDao.deleteStudents(ids);
+        log.info("{} students deleted", x);
+        return x;
+    }
+
 }
