@@ -96,6 +96,7 @@ The following was discovered as part of building this project:
 - We can also use `@Transactional` from spring-framework package to make the method transactional
 - To update single entity, we can first use entity manager to find them, update the values of the object and then calling `merge` method of the entity manager with new object to update it in DB
   - For multiple entities, refer to JPQL section
+- We let the student class implement `Serializable` interface and specify a `serialVersionUID` so as to help with Serialization/Deserialization
 
 ### JPQL
 
