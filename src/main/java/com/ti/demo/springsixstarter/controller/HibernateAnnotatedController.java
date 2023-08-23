@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ti.demo.domain.exception.StudentException;
 import com.ti.demo.domain.hibernate.annotated.Student;
 import com.ti.demo.springsixstarter.service.StudentService;
 
@@ -68,8 +69,7 @@ public class HibernateAnnotatedController {
                 studentService.saveStudent(student);
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body cannot be null");
+            throw new StudentException("Request body cannot be null");
         }
     }
 
@@ -81,8 +81,7 @@ public class HibernateAnnotatedController {
                 studentService.updateStudent(id, updatedStudent);
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body and id cannot be null");
+            throw new StudentException("Request body and id cannot be null");
         }
     }
 
@@ -97,8 +96,7 @@ public class HibernateAnnotatedController {
                 .collect(Collectors.toList());
             studentService.updateLastNameInBulk(actualIds, lname);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ids must be valid list of integers");
+            throw new StudentException("Ids must be valid list of integers");
         }
     }
 
@@ -107,8 +105,7 @@ public class HibernateAnnotatedController {
         try {
             studentService.deleteStudentById(id);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be a valid integer");
+            throw new StudentException("Id must be a valid integer");
         }
     }
 
@@ -119,8 +116,7 @@ public class HibernateAnnotatedController {
                 studentService.deleteStudents(ids);
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be a valid integer");
+            throw new StudentException("Id must be a valid integer");
         }
     }
 

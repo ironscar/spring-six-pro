@@ -115,10 +115,19 @@ The following was discovered as part of building this project:
 - We can use `spring.jpa.hibernate.ddl-auto` to create/drop DB tables at app startup/shutdown automatically based on the entities available
   - values available include `create`, `create-only`, `drop`, `create-drop`, `none` etc
 
-### Http status exceptions
+---
+
+## Exception handling
 
 - We can throw `ResponseStatusException` with specific `HttpStatus` enum value and reason from controller methods as is done in `HibernateAnnotatedController`
   - this includes trace but we can hide that by setting `server.error.include-stacktrace=never` in props
+  - this would end up being on a per-method basis (like is done for `HibernateAnnotatedController.getStudent`)
+  - this property doesn't change how the ControllerAdvice based method works
+- we can also create a `ExceptionController` class with the `@ControllerAdvice` annotation with all the exception handlers
+  - Use a method with the `@ExceptionHandler` annotation to catch that exception here
+  - Return a response entity with the required error response object and http status in response entity
+  - The method takes an argument that defines the type of exception it handles
+  - Interesting point is that using `@RestControllerAdvice` doesn't work
 
 ---
 
