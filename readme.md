@@ -30,6 +30,11 @@ The following was discovered as part of building this project:
 - Once logged in, it will maintain credentials in session so use Incognito to test login
 - This basic authentication will work for GET requests but not for others due to csrf token requirements
   - for now lets disable csrf for local use in `AppSecurityConfig`
+- We can add user roles here in app or by jdbc, first lets take in app
+  - Using `inMemoryUserDetailsManager`
+  - The password is specified as `{noop}<password>` where the `{noop}` specifies the encoding algorithm id, in this case its plaintext
+  - We can add requestMatchers in the filterChain to control which paths are secured for what role and which are not
+  - Doing this will override the username/password props we set in `application.properties` and only the in-memory creds will work
 
 ## Application props
 
@@ -144,6 +149,7 @@ The following was discovered as part of building this project:
 - Spring Data Rest advanced use cases
 - @Transactional use cases
 - Internal processes for find/save to judge performance differences
+- Filters & Interceptors
 
 ---
 
