@@ -150,6 +150,7 @@ The following was discovered as part of building this project:
 - @Transactional use cases
 - Internal processes for find/save to judge performance differences
 - Filters & Interceptors
+- Spring security setup for oauth2
 
 ---
 
