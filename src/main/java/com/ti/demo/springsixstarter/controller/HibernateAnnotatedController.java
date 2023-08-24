@@ -66,6 +66,7 @@ public class HibernateAnnotatedController {
     public void saveStudent(@RequestBody Student student) {
         try {
             if (student != null) {
+                student.setId(null);
                 studentService.saveStudent(student);
             }
         } catch (Exception e) {

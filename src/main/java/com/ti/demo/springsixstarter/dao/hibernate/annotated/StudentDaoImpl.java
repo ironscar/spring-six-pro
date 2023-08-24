@@ -1,9 +1,9 @@
 package com.ti.demo.springsixstarter.dao.hibernate.annotated;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ti.demo.domain.hibernate.annotated.Student;
 import com.ti.demo.springsixstarter.dao.StudentDao;
@@ -16,12 +16,15 @@ public class StudentDaoImpl implements StudentDao {
 
     private EntityManager entityManager;
 
+    private StudentBasicJpaRepository studentRepository;
+
     /**
      * Constructor which gets autowired with the entity manager
      * since no other parameterized constructors, this is used and doesnt need the annotation
      */
-    public StudentDaoImpl(EntityManager em) {
+    public StudentDaoImpl(EntityManager em, StudentBasicJpaRepository srep) {
         entityManager = em;
+        studentRepository = srep;
     }
 
     @Override
@@ -46,27 +49,27 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public Student find(Integer id) {
-        return entityManager.find(Student.class, id);
+        Optional<Student> result = studentRepository.findById(id);
+        return result.isPresent() ? result.get() : null;
     }
 
     @Override
-    @Transactional
     public void save(Student student) {
-        entityManager.persist(student);
+        studentRepository.save(student);
     }
 
     @Override
-    @Transactional
     public void update(Integer id, Student updatedStudent) {
         Student student = find(id);
-        student.setFirstName(updatedStudent.firstName);
-        student.setLastName(updatedStudent.lastName);
-        student.setEmail(updatedStudent.email);
-        entityManager.merge(student);
+        if (student != null) {
+            student.setFirstName(updatedStudent.firstName);
+            student.setLastName(updatedStudent.lastName);
+            student.setEmail(updatedStudent.email);
+            studentRepository.save(student);
+        }
     }
 
     @Override
-    @Transactional
     public int updateLastNameInBulk(List<Integer> ids, String lname) {
         return entityManager
             .createQuery("UPDATE student SET lastName = :lname WHERE id in (:ids)")
@@ -76,13 +79,11 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    @Transactional
     public void deleteStudentById(Integer id) {
-        entityManager.remove(find(id));
+        studentRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public int deleteStudents(List<Integer> ids) {
         return entityManager
             .createQuery("DELETE FROM student WHERE id IN (:ids)")

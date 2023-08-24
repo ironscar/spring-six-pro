@@ -94,6 +94,7 @@ The following was discovered as part of building this project:
   - When we can use the `persist` method of the entity manager to insert object into table as row
   - This also updates the reference of the object inserted to contain the id with which it was inserted if using generatedValue and autoIncrement
 - We can also use `@Transactional` from spring-framework package to make the method transactional
+  - we should specify these on the service layer as a best practice instead of dao layer
 - To update single entity, we can first use entity manager to find them, update the values of the object and then calling `merge` method of the entity manager with new object to update it in DB
   - For multiple entities, refer to JPQL section
 - We let the student class implement `Serializable` interface and specify a `serialVersionUID` so as to help with Serialization/Deserialization
@@ -114,6 +115,11 @@ The following was discovered as part of building this project:
 - Both update and delete using `executeUpdate` returns the number of records updated/deleted
 - We can use `spring.jpa.hibernate.ddl-auto` to create/drop DB tables at app startup/shutdown automatically based on the entities available
   - values available include `create`, `create-only`, `drop`, `create-drop`, `none` etc
+- Spring JPA has an interface called `JpaRepository<EntityType, PrimaryKeyType>` which provides ready methods like `findAll, findById, save, deleteById` etc
+  - it also makes sure that save is transactional out of the box so we can remove `@Transactional` from the relevant service methods
+- This paves the way for `spring-data-rest` which will scan the project for `JpaRepository` entities and automatically create endpoints like `GET, GET (id), POST, PUT, DELETE` with no new code
+  - it just needs the dependency `spring-boot-data-rest` to be added to POM
+  - the response for these endpoints include the actual data and metadata because its `HATEOAS` compliant
 
 ---
 
@@ -129,6 +135,15 @@ The following was discovered as part of building this project:
   - The method takes an argument that defines the type of exception it handles
   - By default this will return status 200 but we can use `@ResponseStatus(HttpStatus.<Code>)` to set the correct status
   - `@RestControllerAdvice` is `@ControllerAdvice` + `@ResponseBody` so we would have to use `ResponseEntity<StudentErrorResponse>` as return type if using `ControllerAdvice` and set the status there instead of the `@ResponseStatus`
+
+---
+
+## Deep Dive Todo
+
+- Spring Data Jpa & JpaRepositories advanced use cases
+- Spring Data Rest advanced use cases
+- @Transactional use cases
+- Internal processes for find/save to judge performance differences
 
 ---
 

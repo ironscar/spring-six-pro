@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ti.demo.domain.hibernate.annotated.Student;
 import com.ti.demo.springsixstarter.dao.StudentDao;
@@ -45,6 +46,7 @@ public class StudentService {
         log.info("Update student: {}", updatedStudent);
     }
 
+    @Transactional
     public int updateLastNameInBulk(List<Integer> ids, String lname) {
         int x = studentDao.updateLastNameInBulk(ids, lname);
         log.info("{} students updated", x);
@@ -56,6 +58,7 @@ public class StudentService {
         studentDao.deleteStudentById(id);
     }
 
+    @Transactional
     public int deleteStudents(List<Integer> ids) {
         int x = studentDao.deleteStudents(ids);
         log.info("{} students deleted", x);
