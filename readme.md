@@ -148,7 +148,8 @@ The following was discovered as part of building this project:
 - Spring Data Jpa & JpaRepositories advanced use cases
 - Spring Data Rest advanced use cases
 - @Transactional use cases
-- Internal processes for find/save to judge performance differences
+- Internal processes for find/save in hibernate annotated to judge performance differences
+- MyBatis xml based sql
 - Filters & Interceptors
 - Spring security setup for oauth2
 
