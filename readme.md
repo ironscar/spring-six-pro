@@ -35,6 +35,21 @@ The following was discovered as part of building this project:
   - The password is specified as `{noop}<password>` where the `{noop}` specifies the encoding algorithm id, in this case its plaintext
   - We can add requestMatchers in the filterChain to control which paths are secured for what role and which are not
   - Doing this will override the username/password props we set in `application.properties` and only the in-memory creds will work
+- Next up is adding users in jdbc
+  - Spring security defines a table structure which it can directly pull user data from
+    - The default structure includes:
+      - a `users` table with columns `username`, `password` and `enabled`
+      - an `authorities` table with columns `username` and `authority` (roles)
+      - `username` in `authorities` is an FK to `users` table
+      - the `authority` columm takes the role with `ROLE_` as spring security expects but doesn't automatically do like it does for in-memory
+    - Then we create a new `UserDetailsManager` bean and return a `JdbcUserDetailsManager` mean with the autowired `DataSource` instance
+    - For this, we will use `{bcrypt}` instead of `{noop}` which specifies encrypted by bcrypt, which is how we should store passwords
+      - We generate the bcrypt password and prefix it with `{bcrypt}` and store it in DB, everything else works the same
+  - You can define your custom table structure but then you need to write additional logic for pulling the data 
+    - we create two new tables with similar data `custom_users` and `custom_authorities`
+    - We need to set two properties like SQL statements on the `JdbcUserDetailsManager` which are `setUsersByUsernameQuery` and `setAuthoritiesByUsernameQuery`
+    - The `?` in the statement specifies the parameter that is injected later
+    - Notice that we append `ROLE_` here instead of in table to make it similar to in-memory
 
 ## Application props
 
