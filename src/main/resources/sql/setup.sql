@@ -97,7 +97,7 @@ select* from student;
 select u.*, a.authority from users u join authorities a on u.username = a.username;
 
 -- select from custom security tables
-select u.*, concat('ROLE_', a.role) role from custom_users u join custom_authorities a on u.userid = a.userid;
+select u.userid, u.pwd, CASE WHEN u.enabled = 'Y' THEN 1 ELSE 0 END enabled, concat('ROLE_', a.role) role from custom_users u join custom_authorities a on u.userid = a.userid;
 
 
 
