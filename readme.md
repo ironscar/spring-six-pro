@@ -158,6 +158,22 @@ The following was discovered as part of building this project:
 
 ---
 
+## Spring AOP
+
+- AOP stands for `Aspect Oriented Programming`
+- It helps with doing common things across multiple places without touching all those places thereby allowing cleaner code but may make the application flow hard to follow and have some performance impacts
+  - `aspect` is the module of code for a cross-cutting concern (like logging for example)
+  - `advice` is what action is taken and when it should be applied
+      - `before`, `after finally`, `after return`, `after throwing`, `around` are different advice types that exist
+  - `joint point` is when to apply code during program execution
+  - `point cut` is where advice should be applied
+  - `weaving` connects aspects to target objects
+    - it can be `compile-time`, `load-time` or `run-time`, the latter being the slowest
+    - Spring uses run-time weaving AOP with only method-level joint-points and only beans can have aspects
+- 
+
+---
+
 ## Deep Dive Todo
 
 - Spring Data Jpa & JpaRepositories advanced use cases
