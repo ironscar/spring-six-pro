@@ -165,12 +165,13 @@ The following was discovered as part of building this project:
   - `aspect` is the module of code for a cross-cutting concern (like logging for example)
   - `advice` is what action is taken and when it should be applied
       - `before`, `after finally`, `after return`, `after throwing`, `around` are different advice types that exist
-  - `joint point` is when to apply code during program execution
+  - `join point` is when to apply code during program execution
   - `point cut` is where advice should be applied
   - `weaving` connects aspects to target objects
     - it can be `compile-time`, `load-time` or `run-time`, the latter being the slowest
-    - Spring uses run-time weaving AOP with only method-level joint-points and only beans can have aspects
-- 
+    - Spring uses run-time weaving AOP with only method-level join-points and only beans can have aspects
+- We create an aspect using `@Aspect` and spring requires marking that class as a bean too
+  - example aspects are in the `aspect` package using point-cut expressions, get method names, params, return vals etc
 
 ---
 
