@@ -172,6 +172,7 @@ The following was discovered as part of building this project:
     - Spring uses run-time weaving AOP with only method-level join-points and only beans can have aspects
 - We create an aspect using `@Aspect` and spring requires marking that class as a bean too
   - example aspects are in the `aspect` package using point-cut expressions, get method names, params, return vals etc
+- We can define common pointcut expressions which can later be resued or combined in `CommonPointcuts`
 
 ---
 

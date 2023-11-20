@@ -90,5 +90,5 @@ public class StudentDaoImpl implements StudentDao {
             .setParameter("ids", ids)
             .executeUpdate();
     }
-    
+
 }
