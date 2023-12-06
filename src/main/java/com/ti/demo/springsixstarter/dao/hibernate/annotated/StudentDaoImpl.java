@@ -11,7 +11,7 @@ import com.ti.demo.springsixstarter.dao.StudentDao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
-@Repository(value = "hibernate-annotated-student-dao")
+@Repository(value = "hibernateAnnotatedStudentDao")
 public class StudentDaoImpl implements StudentDao {
 
     private EntityManager entityManager;

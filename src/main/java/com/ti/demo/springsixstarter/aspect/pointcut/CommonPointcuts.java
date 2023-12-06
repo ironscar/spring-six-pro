@@ -1,6 +1,12 @@
 package com.ti.demo.springsixstarter.aspect.pointcut;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 
 import lombok.experimental.UtilityClass;
 
@@ -29,5 +35,27 @@ public class CommonPointcuts {
      */
     @Pointcut("execution(* com.ti.demo.springsixstarter.service.StudentService.get*(Integer))")
     public static void pointcutExprForGetterById() {}
+
+    /**
+     * Utiltity method to get method details as string for logging
+     * 
+     * @param jp - join point
+     * @return - stringified method details
+     */
+    public static String getMethodDetails(JoinPoint jp) {
+        String methodName = jp.getSignature().getDeclaringType().getPackageName() + "." + jp.getSignature().getName();
+        String returnType = ((MethodSignature) jp.getSignature()).getReturnType().getName();
+        return methodName + " " + returnType;
+    }
+
+    /**
+     * Utiltity method to get method args as list of strings
+     * 
+     * @param jp - join point
+     * @return - list of stringified method args
+     */
+    public static List<String> getMethodArgs(JoinPoint jp) {
+        return Arrays.asList(jp.getArgs()).stream().map(Object::toString).collect(Collectors.toList());
+    }
 
 }

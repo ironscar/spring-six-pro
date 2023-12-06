@@ -50,6 +50,8 @@ The following was discovered as part of building this project:
     - We need to set two properties like SQL statements on the `JdbcUserDetailsManager` which are `setUsersByUsernameQuery` and `setAuthoritiesByUsernameQuery`
     - The `?` in the statement specifies the parameter that is injected later
     - Notice that we append `ROLE_` here instead of in table to make it similar to in-memory
+  - Finally, we can get the details of logged in users in endpoints using `@AuthenticationPrincipal` on an argument
+    - Type of argument is `org.springframework.security.core.userdetails.User` as used in `HibernateAnnotatedController.getStudents`
 
 ## Application props
 
@@ -164,15 +166,22 @@ The following was discovered as part of building this project:
 - It helps with doing common things across multiple places without touching all those places thereby allowing cleaner code but may make the application flow hard to follow and have some performance impacts
   - `aspect` is the module of code for a cross-cutting concern (like logging for example)
   - `advice` is what action is taken and when it should be applied
-      - `before`, `after finally`, `after return`, `after throwing`, `around` are different advice types that exist
+      - `before`, `after`, `after return`, `after throwing`, `around` are different advice types that exist
+      - `before` fires before execution
+      - `after throwing` only fires if there is exception during execution and passes that exception to calling class after logic
+      - `after return` only fires if no exceptions after execution
+      - `after` fires regardless of exception or successful return after execution
+      - `around` [TODO]
   - `join point` is when to apply code during program execution
   - `point cut` is where advice should be applied
   - `weaving` connects aspects to target objects
     - it can be `compile-time`, `load-time` or `run-time`, the latter being the slowest
     - Spring uses run-time weaving AOP with only method-level join-points and only beans can have aspects
 - We create an aspect using `@Aspect` and spring requires marking that class as a bean too
-  - example aspects are in the `aspect` package using point-cut expressions, get method names, params, return vals etc
-- We can define common pointcut expressions which can later be resued or combined in `CommonPointcuts`
+  - example aspects are in the `aspect` package using point-cut expressions, get method names, params, return vals, thrown exceptions etc
+  - We can define common pointcut expressions which can later be resued or combined in `CommonPointcuts`
+  - To define an order to how multiple aspects are applied, we have to create separate aspect beans for them and then use `@Order(x)` for each of them, like is done with `SecondOrderAspect.java`
+    - If you have an `afterThrowing` aspect of order(1) and an `after` aspect of order(2), the latter still gets executed first
 
 ---
 

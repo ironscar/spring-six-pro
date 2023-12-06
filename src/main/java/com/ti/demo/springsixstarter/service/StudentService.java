@@ -19,7 +19,7 @@ public class StudentService {
      * 
      * @param sd - student dao bean from hibernate annotated package
      */
-    public StudentService(@Qualifier("hibernate-annotated-student-dao") StudentDao sd) {
+    public StudentService(@Qualifier("hibernateAnnotatedStudentDao") StudentDao sd) {
         studentDao = sd;
     }
 
@@ -28,6 +28,9 @@ public class StudentService {
     }
 
     public Student getStudent(Integer id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Id must be a non-zero integer");
+        }
         return studentDao.find(id);
     }
 
