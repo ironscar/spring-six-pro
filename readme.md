@@ -171,7 +171,12 @@ The following was discovered as part of building this project:
       - `after throwing` only fires if there is exception during execution and passes that exception to calling class after logic
       - `after return` only fires if no exceptions after execution
       - `after` fires regardless of exception or successful return after execution
-      - `around` [TODO]
+      - `around` fires before and after method execution using a `proceeding join point`
+        - a `proceeding join point` can be used to execute the method at a specific step in the aspect
+        - generally executes after `before` and before `after` aspects regardless of `Order` annotation
+        - aspect method must return result from `proceeding join point` for actual methods to work
+        - doesn't execute past the `proceeding join point` if there is exception and you don't catch it
+        - if you catch it, `after throwing` aspect will not trigger since the exception is already handled
   - `join point` is when to apply code during program execution
   - `point cut` is where advice should be applied
   - `weaving` connects aspects to target objects
