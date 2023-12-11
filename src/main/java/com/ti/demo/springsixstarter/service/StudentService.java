@@ -2,24 +2,26 @@ package com.ti.demo.springsixstarter.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ti.demo.domain.hibernate.annotated.Student;
-import com.ti.demo.springsixstarter.dao.StudentDao;
+import com.ti.demo.domain.mybatis.xmlsql.Student;
+import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
 
+/**
+ * Need to update the imports for Student and StudentDao depending on hibernate or mybatis
+ */
 @Service
 public class StudentService {
 
-    private StudentDao studentDao;
+    private StudentMbDao studentDao;
 
     /**
      * Method autowired automatically by spring
      * 
-     * @param sd - student dao bean from hibernate annotated package
+     * @param sd - student dao bean
      */
-    public StudentService(@Qualifier("hibernateAnnotatedStudentDao") StudentDao sd) {
+    public StudentService(StudentMbDao sd) {
         studentDao = sd;
     }
 

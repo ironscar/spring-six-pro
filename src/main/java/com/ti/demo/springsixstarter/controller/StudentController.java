@@ -20,15 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ti.demo.domain.exception.StudentException;
-import com.ti.demo.domain.hibernate.annotated.Student;
+import com.ti.demo.domain.mybatis.xmlsql.Student;
 import com.ti.demo.springsixstarter.service.StudentService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Need to update the imports for Student depending on hibernate or mybatis
+ */
 @Slf4j
 @RestController
 @RequestMapping("/app2/student")
-public class HibernateAnnotatedController {
+public class StudentController {
 
     private StudentService studentService;
 
@@ -37,7 +40,7 @@ public class HibernateAnnotatedController {
      * 
      * @param ss - student service bean
      */
-    public HibernateAnnotatedController(StudentService ss) {
+    public StudentController(StudentService ss) {
         studentService = ss;
     }
 
@@ -97,7 +100,7 @@ public class HibernateAnnotatedController {
         try {
             List<Integer> actualIds = Arrays.asList(ids.split(","))
                 .stream()
-                .map(id -> Integer.parseInt(id))
+                .map(Integer::parseInt)
                 .collect(Collectors.toList());
             studentService.updateLastNameInBulk(actualIds, lname);
         } catch (Exception e) {

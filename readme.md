@@ -51,7 +51,7 @@ The following was discovered as part of building this project:
     - The `?` in the statement specifies the parameter that is injected later
     - Notice that we append `ROLE_` here instead of in table to make it similar to in-memory
   - Finally, we can get the details of logged in users in endpoints using `@AuthenticationPrincipal` on an argument
-    - Type of argument is `org.springframework.security.core.userdetails.User` as used in `HibernateAnnotatedController.getStudents`
+    - Type of argument is `org.springframework.security.core.userdetails.User` as used in `StudentController.getStudents`
 
 ## Application props
 
@@ -106,6 +106,8 @@ The following was discovered as part of building this project:
 
 ### Hibernate annotated basics
 
+- Specific classes for `StudentHbDao` and `StudentMbDao` are required for it to work with hibernate and mybatis respectively so recheck the imports in the `StudentService`
+  - The `Student` class used also differs to recheck those imports in `StudentService` and `StudentController`
 - we have clases mapped to tables and their fields mapped to columns
 - `@Entity` requires a no-arg constructor so we use `@NoArgsConstructor` using lombok
 - If the `@Entity` is not in same package as the current spring boot application class, we need to add the `@EntityScan` annotation and specify the packages where to find the entity classes
@@ -145,11 +147,29 @@ The following was discovered as part of building this project:
 
 ---
 
+## Querying with MyBatis
+
+### Mybatis XML SQL
+
+- Add dependency `mybatis-spring-boot-starter`
+- Add interface with `@Repository` to define the methods available and define `@Param(<paramName>)` for the params that should be available in mapper xml
+- Under `resources`, create a director structure similar to the java interfaces and create an xml file with same name as interface
+- In in the xml file, we can create resultMappers, select statements etc
+  - top level element is `mapper` with attribute `namespace` and value is classpath of `StudentMbDao`
+  - that can contain all other mybatis xml tags and elements
+  - `resultMap` takes an `id` to refer to that mapper and `type` takes classpath of the result type
+  - the above `id` of the mapper can be used in the `resultMap` attribute of `select` statements
+  - `select` statements also take an `id`, whose value is the name of the interface method in java
+  - here, all tables and columns use the exact name that is there in SQL
+- Put `@MapperScan(basePackages = {<packageName>})` in the top-level Application file for all packages containing mapper interfaces for mybatis
+
+---
+
 ## Exception handling
 
-- We can throw `ResponseStatusException` with specific `HttpStatus` enum value and reason from controller methods as is done in `HibernateAnnotatedController`
+- We can throw `ResponseStatusException` with specific `HttpStatus` enum value and reason from controller methods as is done in `StudentController`
   - this includes trace but we can hide that by setting `server.error.include-stacktrace=never` in props
-  - this would end up being on a per-method basis (like is done for `HibernateAnnotatedController.getStudent`)
+  - this would end up being on a per-method basis (like is done for `StudentController.getStudent`)
   - this property doesn't change how the `RestControllerAdvice` based method works
 - we can also create a `ExceptionController` class with the `@RestControllerAdvice` annotation with all the exception handlers
   - Use a method with the `@ExceptionHandler` annotation to catch that exception here

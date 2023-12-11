@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao">
+
+    <resultMap id="studentMap" type="com.ti.demo.domain.mybatis.xmlsql.Student">
+        <id property="id" column="id" />
+        <result property="firstName" column="first_name" />
+        <result property="lastName" column="last_name" />
+        <result property="email" column="email" />
+    </resultMap>
+
+    <select id="getAll" resultMap="studentMap">
+        select* 
+        from student
+        <where>
+            <if test="fname != null and fname != ''">
+                first_name = #{fname}
+            </if>
+            <if test="lname != null and lname != ''">
+                AND last_name = #{lname}
+            </if>
+        </where>
+    </select>
+
+</mapper>
