@@ -160,8 +160,10 @@ The following was discovered as part of building this project:
   - `resultMap` takes an `id` to refer to that mapper and `type` takes classpath of the result type
   - the above `id` of the mapper can be used in the `resultMap` attribute of `select` statements
   - `select` statements also take an `id`, whose value is the name of the interface method in java
-  - here, all tables and columns use the exact name that is there in SQL
+  - here, all tables and columns use the exact name that is there in SQL but don't use semicolons
+  - Parameters are generally used as `#{<paramName>}`
 - Put `@MapperScan(basePackages = {<packageName>})` in the top-level Application file for all packages containing mapper interfaces for mybatis
+- Used `@Transactional` in the DAO layer for the methods that weren't marked as transactional in service
 
 ---
 
@@ -212,11 +214,7 @@ The following was discovered as part of building this project:
 
 ## Deep Dive Todo
 
-- Spring Data Jpa & JpaRepositories advanced use cases
-- Spring Data Rest advanced use cases
 - @Transactional use cases
-- Internal processes for find/save in hibernate annotated to judge performance differences
-- MyBatis xml based sql
 - Filters & Interceptors
 - Spring security setup for oauth2
 

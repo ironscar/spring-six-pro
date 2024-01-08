@@ -22,4 +22,47 @@
         </where>
     </select>
 
+    <select id="find" resultMap="studentMap">
+        select*
+        from student
+        where id = #{id}
+    </select>
+
+    <insert id="save">
+        insert into student (first_name, last_name, email)
+        values (#{student.firstName}, #{student.lastName}, #{student.email})
+    </insert>
+
+    <update id="update">
+        update student 
+            <set>
+                first_name = #{updatedStudent.firstName},
+                last_name = #{updatedStudent.lastName},
+                email = #{updatedStudent.email}
+            </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateLastNameInBulk">
+        update student
+            <set>
+                last_name = #{lname}
+            </set>
+        where id in 
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteStudentById">
+        delete from student where id = #{id}
+    </delete>
+
+    <delete id="deleteStudents">
+        delete from student where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
 </mapper>
