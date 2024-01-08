@@ -212,6 +212,37 @@ The following was discovered as part of building this project:
 
 ---
 
+## Spring Reactive 
+
+### Basics
+
+- Spring Reactive requires `spring-boot-starter-webflux` dependency
+- For reactive APIs, we need a `handler` which takes a request and creates a response
+  - This is a component bean and defines the method taking a `ServerRequest` and generating a `Mono<ServerResponse>`
+  - To send a value in body, we can use `BodyInserters.fromValue(obj)` where `obj` is the value
+- We also need a `router` to specify what route does the response come from
+  - This takes a handler as argument to use in a route
+  - Define a single config class with a single bean of `RouterFunctions<ServerResponse>`
+  - You can define multiple routes here with `RouterFunctions.route().andRoute()...`
+  - Each route method internally takes the request predicates like api route, content type etc and the handler method reference
+- If multiple handlers, create separate routers for each handler and all related routes can go inside the same router
+- Check examples in package `springsixstarter.reactive`
+
+### Reactive APIs
+
+
+### Reactive Security
+
+
+### Caveats
+
+- You shouldn't have `web` and `webflux` dependencies in same project as webflux stuff silently fails with 404 in that case
+  - commenting the dependency and `AppSecurityConfig` for now to make it work
+  - we also need to stop using the `custom-jdbc-security` we setup as that config if in AppSecurityConfig
+  - as a result, the default username and password can be added as `Basic Auth` while calling API
+
+---
+
 ## Deep Dive Todo
 
 - Spring Reactive
@@ -226,6 +257,7 @@ The following was discovered as part of building this project:
 - Filters & Interceptors
 - @Transactional use cases
 - Jmeter for performance comparison of competing technologies
+- Spring boot testing
 
 ---
 
