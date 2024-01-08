@@ -214,9 +214,18 @@ The following was discovered as part of building this project:
 
 ## Deep Dive Todo
 
-- @Transactional use cases
+- Spring Reactive
+- Service communication (RabbitMQ / Kafka / gRPC)
+- API layer 1 (GraphQL / Sockets)
+- NoSQL 1 (MongoDB / ScyllaDB)
+- Caching (Redis Sentinels)
+- API layer 2 (FTP / SMTP)
+- NoSQL 2 (Redis /Cassandra)
+- Spring Cloud
+- Spring Security advanced use cases
 - Filters & Interceptors
-- Spring security setup for oauth2
+- @Transactional use cases
+- Jmeter for performance comparison of competing technologies
 
 ---
 
