@@ -21,6 +21,11 @@ public class GreetingRouter {
                     .GET("/app3/reactive")
                     .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 handler::hello
+            ).andRoute(
+                RequestPredicates
+                    .GET("/app3/reactive-client")
+                    .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
+                handler::helloClient
             );
     }
     

@@ -228,16 +228,28 @@ The following was discovered as part of building this project:
 - If multiple handlers, create separate routers for each handler and all related routes can go inside the same router
 - Check examples in package `springsixstarter.reactive`
 
-### Reactive APIs
+### Reactive Programming
 
-
-### Reactive Security
-
+- A `Mono` is a reactive type that can emit at most one element (something like a one-time observable)
+  - It allows subscribing to and specify actions on emit, on error and on complete
+- A `Flux` is a reactive type that can emit any number of elements (true observable)
+  - It also allows subscribing to in a similar manner
+- `flatMap` can be used to convert a `Mono<X>` to `Mono<Y>` by passing a custom lambda function which returns another `Mono`
+  - they can be chained in sequence to keep converting from one `Mono` to another
+- Figure out how to add: [TODO]
+  - path variable and request params
+  - auth config
+  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
+  - reactive exception controller
+  - all types of http methods
+  - DB calls
+  - parallel calls with webclient
 
 ### Caveats
 
-- You shouldn't have `web` and `webflux` dependencies in same project as webflux stuff silently fails with 404 in that case
-  - commenting the dependency and `AppSecurityConfig` for now to make it work
+- You shouldn't have `web` and `webflux` dependencies in same project as webflux APIs silently fail with 404 in that case
+  - we can still use `WebClient` in normal REST APIs though
+  - commenting the dependency and `AppSecurityConfig` for now to make it work as `HttpSecurity` bean is only added for `web`
   - we also need to stop using the `custom-jdbc-security` we setup as that config if in AppSecurityConfig
   - as a result, the default username and password can be added as `Basic Auth` while calling API
 
