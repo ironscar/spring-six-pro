@@ -246,7 +246,7 @@ The following was discovered as part of building this project:
   - they can be chained in sequence to keep converting from one `Mono` to another
 - Figure out how to add: [TODO]
   - path variable and request params
-  - auth config in DB
+  - auth config in MongoDB
   - reactive exception controller
   - all types of http methods
   - DB calls
@@ -269,12 +269,12 @@ The following was discovered as part of building this project:
 ## Deep Dive Todo
 
 - Spring Reactive
+- NoSQL 1 (MongoDB)
 - Service communication (RabbitMQ / Kafka / gRPC)
 - API layer 1 (GraphQL / Sockets)
-- NoSQL 1 (MongoDB / ScyllaDB)
+- NoSQL 2 (Redis / ScyllaDB / Cassandra)
 - Caching (Redis Sentinels)
 - API layer 2 (FTP / SMTP)
-- NoSQL 2 (Redis /Cassandra)
 - Spring Cloud
 - Spring Security advanced use cases
 - Filters & Interceptors
