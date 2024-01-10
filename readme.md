@@ -228,6 +228,14 @@ The following was discovered as part of building this project:
 - If multiple handlers, create separate routers for each handler and all related routes can go inside the same router
 - Check examples in package `springsixstarter.reactive`
 
+### Reactive Security Config
+
+- Spring reactive uses `ServerHttpSecurity` instead of `HttpSecurity`
+  - its mostly similar to configure except for using `authorizeExchange`, `pathMatchers` and `anyExchange` instead
+- By default, using `spring.security.user` properties will authenticate every API
+- We can use in-memory user details by creating a bean of type `MapReactiveUserDetailsService` which implements `ReactiveUserDetailsService`
+  - the setup is mostly similar to the `InMemoryUserDetailsManager`
+
 ### Reactive Programming
 
 - A `Mono` is a reactive type that can emit at most one element (something like a one-time observable)
@@ -238,20 +246,23 @@ The following was discovered as part of building this project:
   - they can be chained in sequence to keep converting from one `Mono` to another
 - Figure out how to add: [TODO]
   - path variable and request params
-  - auth config
-  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
+  - auth config in DB
   - reactive exception controller
   - all types of http methods
   - DB calls
   - parallel calls with webclient
+  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
 
 ### Caveats
 
 - You shouldn't have `web` and `webflux` dependencies in same project as webflux APIs silently fail with 404 in that case
   - we can still use `WebClient` in normal REST APIs though
-  - commenting the dependency and `AppSecurityConfig` for now to make it work as `HttpSecurity` bean is only added for `web`
-  - we also need to stop using the `custom-jdbc-security` we setup as that config if in AppSecurityConfig
-  - as a result, the default username and password can be added as `Basic Auth` while calling API
+  - commenting the dependency and adding `webflux` and `web` as profiles to select the specific security config for now to make it work as `HttpSecurity` bean is only added for `web` and not for `webflux`
+  - the `custom-jdbc-security` won't work anymore as spring reactive does not support it out of the box
+    - JDBC/JPA are blocking-type APIs and so spring reactive does not recommend using `JdbcUserDetailsManager`
+    - It recommends using MongoDB/Redis
+  - as a result, the default username and password can be added as `Basic Auth` while calling API unless overridden
+- Even if `web` dependency is commented out, the web APIs still work, but with the webflux auth config
 
 ---
 

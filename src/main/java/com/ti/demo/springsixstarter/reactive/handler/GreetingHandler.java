@@ -2,8 +2,6 @@ package com.ti.demo.springsixstarter.reactive.handler;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -32,22 +30,20 @@ public class GreetingHandler {
     public Mono<ServerResponse> helloClient(ServerRequest request) {
         return ReactiveSecurityContextHolder
             .getContext()
-            .flatMap(context -> Mono.just(
-                (User) context.getAuthentication().getPrincipal()
-            )).flatMap(user -> client
+            .flatMap(context -> Mono.just(context.getAuthentication()))
+            .flatMap(auth -> client
                 .get()
                 .uri("/app3/reactive")
-                .headers(headers -> headers.setBasicAuth(user.getUsername(), "password"))
+                .headers(headers -> headers.setBasicAuth(auth.getName(), "johnpass"))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(Greeting.class)
-            ).flatMap(greeting -> ServerResponse
+                .bodyToMono(Greeting.class))
+            .flatMap(greeting -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(
                     new Greeting(greeting.getMessage().replace("Reactive", "Reactive Client"))
-                ))
-            );
+                )));
     }
     
 }
