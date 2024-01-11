@@ -22,6 +22,11 @@ public class AppConfig {
         return "custom " + customValue1;
     }
 
+    /**
+     * method to create a bean for the WebClient instance
+     *  
+     * @return web client bean
+     */
     @Bean
     public WebClient getWebClient() {
         return WebClient.builder().baseUrl("http://localhost:8081").build();

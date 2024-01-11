@@ -16,15 +16,15 @@ public class GreetingRouter {
     @Bean
     public RouterFunction<ServerResponse> route(GreetingHandler handler) {
         return RouterFunctions
-            .route(
-                RequestPredicates
-                    .GET("/app3/reactive")
-                    .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+            .route((
+                    RequestPredicates.GET("/app3/reactive/{param1}")
+                    .or(RequestPredicates.GET("/app3/reactive/{param1}/"))
+                ).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 handler::hello
-            ).andRoute(
-                RequestPredicates
-                    .GET("/app3/reactive-client")
-                    .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), 
+            ).andRoute((
+                    RequestPredicates.GET("/app3/{path}/client/{param1}")
+                    .or(RequestPredicates.GET("/app3/reactive-client/{param1}/"))
+                ).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 handler::helloClient
             );
     }

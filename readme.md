@@ -236,6 +236,22 @@ The following was discovered as part of building this project:
 - We can use in-memory user details by creating a bean of type `MapReactiveUserDetailsService` which implements `ReactiveUserDetailsService`
   - the setup is mostly similar to the `InMemoryUserDetailsManager`
 
+### Reactive Controller
+
+- Path vaiables can be specified in the url passed to `RequestPredicates.GET` in router as `{param}`
+  - they can be accessed in handler as `request.pathVariable(<paramName>)`
+  - they will always be string and cannot be type-checked
+- Query parameters need not even be specified in the url
+  - they can be accessed in handler as `request.queryParam(<paramName>)` which returns an optional
+  - they will always be string and cannot be type-checked
+- Multiple paths for same handler can be specified by 
+  - `(RequestPredicates.GET(path1).or(RequestPredicates.GET(path2))).and(...)`
+- For exception handling, we can either do it at a handler level or a global level
+  - For handler level, `Mono` has multiple error methods like `onErrorReturn`, `onErrorResume` etc
+    - we can use `onErrorResume` at the end of the chain after the main server response piece
+    - here we can use the exception object to return a server response with a custom exception body
+    - whenever there is an error at any part of the chain, it will skip the chain till the next error handler and execute it
+
 ### Reactive Programming
 
 - A `Mono` is a reactive type that can emit at most one element (something like a one-time observable)
@@ -245,12 +261,11 @@ The following was discovered as part of building this project:
 - `flatMap` can be used to convert a `Mono<X>` to `Mono<Y>` by passing a custom lambda function which returns another `Mono`
   - they can be chained in sequence to keep converting from one `Mono` to another
 - Figure out how to add: [TODO]
-  - path variable and request params
-  - auth config in MongoDB
   - reactive exception controller
-  - all types of http methods
-  - DB calls
+  - all types of http methods and request bodies
   - parallel calls with webclient
+  - DB calls in MongoDB
+  - auth config in MongoDB
   - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
 
 ### Caveats
