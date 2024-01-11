@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ti.demo.domain.exception.StudentErrorResponse;
 import com.ti.demo.domain.reactive.Greeting;

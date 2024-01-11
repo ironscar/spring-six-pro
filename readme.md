@@ -251,6 +251,7 @@ The following was discovered as part of building this project:
     - we can use `onErrorResume` at the end of the chain after the main server response piece
     - here we can use the exception object to return a server response with a custom exception body
     - whenever there is an error at any part of the chain, it will skip the chain till the next error handler and execute it
+  - For global level [TODO]
 
 ### Reactive Programming
 
