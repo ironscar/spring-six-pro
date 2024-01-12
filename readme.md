@@ -246,12 +246,16 @@ The following was discovered as part of building this project:
   - they will always be string and cannot be type-checked
 - Multiple paths for same handler can be specified by 
   - `(RequestPredicates.GET(path1).or(RequestPredicates.GET(path2))).and(...)`
+
 - For exception handling, we can either do it at a handler level or a global level
   - For handler level, `Mono` has multiple error methods like `onErrorReturn`, `onErrorResume` etc
     - we can use `onErrorResume` at the end of the chain after the main server response piece
     - here we can use the exception object to return a server response with a custom exception body
     - whenever there is an error at any part of the chain, it will skip the chain till the next error handler and execute it
-  - For global level [TODO]
+    - it only seemed to work for web client usage but not for actual response return [WHY - CHECK NOW]
+      - for now, using try/catch but need to figure out how to use the reactive error operators
+  - For global level, we need to create global error handler component
+    - 
 
 ### Reactive Programming
 

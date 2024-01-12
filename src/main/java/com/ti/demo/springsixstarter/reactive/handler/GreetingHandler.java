@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.ti.demo.domain.exception.StudentErrorResponse;
+import com.ti.demo.domain.exception.StudentException;
 import com.ti.demo.domain.reactive.Greeting;
 
 import reactor.core.publisher.Mono;
@@ -26,15 +27,20 @@ public class GreetingHandler {
     }
 
     public Mono<ServerResponse> hello(ServerRequest request) {
-        return ServerResponse.ok()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromValue(
+        try {
+            return Mono.just(
                 new Greeting(
                     "Hello Reactive Greeting! " + 
                     request.pathVariable("param1") + "," +
-                    request.queryParam("param2").orElse("default2")
-                )
-            ));
+                    request.queryParam("param2").orElse("default2"))
+            ).flatMap(greeting -> ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(greeting)
+            );
+        } catch (Exception e) {
+            throw new StudentException("incorrect usage");
+        }
     }
 
     public Mono<ServerResponse> helloClient(ServerRequest request) {
