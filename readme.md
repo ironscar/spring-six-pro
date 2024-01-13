@@ -262,6 +262,7 @@ The following was discovered as part of building this project:
     - Now `WebExceptionHandler` is low level so we have to deal directly in bytes
     - Thus we use `ObjectMapper` to create bytes of our error response body and write it to response
     - This throws exceptions but it shouldn't, so to be safe, we add an error message and convert that to bytes for a single error message if this ever happens
+    - This setup also works for the servlet controller endpoint exception handling and you wouldn't need an exception controller either as long as webflux is in dependency, but since that is more concise to write, we will keep it
 
 ### Reactive Programming
 
