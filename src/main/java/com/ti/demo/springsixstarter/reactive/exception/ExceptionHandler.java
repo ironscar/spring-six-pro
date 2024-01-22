@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Order(-2)
-public class ReactiveExceptionHandler implements WebExceptionHandler {
+public class ExceptionHandler implements WebExceptionHandler {
 
     private ObjectMapper mapper;
 
-    ReactiveExceptionHandler(ObjectMapper mapper) {
+    ExceptionHandler(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

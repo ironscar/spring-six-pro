@@ -14,15 +14,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@Profile("webflux")
-public class WebFluxAppSecurityConfig {
+public class AppSecurityConfig {
 
-    private static final String STUDENT_BASE_PATH = "/app2/student";
-    private static final String STUDENT_BASE_PATH2 = "/app2/student/*";
     private static final String ROLE_STUDENT = "STUDENT";
     private static final String ROLE_TEACHER = "TEACHER";
     private static final String ROLE_ADMIN = "ADMIN";
-    
+
     /**
      * this is used for reactive auth
      * 
@@ -34,10 +31,6 @@ public class WebFluxAppSecurityConfig {
         return http
             .authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
-                .pathMatchers(HttpMethod.GET, STUDENT_BASE_PATH, STUDENT_BASE_PATH2).hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
-                .pathMatchers(HttpMethod.POST, STUDENT_BASE_PATH, STUDENT_BASE_PATH2).hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
-                .pathMatchers(HttpMethod.PUT, STUDENT_BASE_PATH, STUDENT_BASE_PATH2).hasAnyRole(ROLE_TEACHER)
-                .pathMatchers(HttpMethod.DELETE, STUDENT_BASE_PATH, STUDENT_BASE_PATH2).hasAnyRole(ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, "/app3/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
                 .anyExchange().permitAll())
             .httpBasic(Customizer.withDefaults())
