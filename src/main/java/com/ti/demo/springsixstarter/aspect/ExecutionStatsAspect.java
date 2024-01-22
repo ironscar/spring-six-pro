@@ -23,7 +23,7 @@ public class ExecutionStatsAspect {
      * @throws Throwable
      * @returns result
      */
-    @Around(value = CommonPointcuts.POINTCUT_EXPR_FOR_STUD_SERVICE)
+    @Around(value = CommonPointcuts.POINTCUT_EXPR_FOR_CUSTOM_EXEC_STATS)
     public Object executionStatsAspect(ProceedingJoinPoint pjp) throws Throwable {
         long begin = System.currentTimeMillis();
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ti.demo.domain.mybatis.xmlsql.Student;
+import com.ti.demo.springsixstarter.aspect.custom.ExecutionStatsCustomAspect;
 import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentDao;
 
 /**
@@ -25,10 +26,12 @@ public class StudentService {
         studentDao = sd;
     }
 
+    @ExecutionStatsCustomAspect
     public List<Student> getStudents(String fname, String lname) {
         return studentDao.getAll(fname, lname);
     }
 
+    @ExecutionStatsCustomAspect
     public Student getStudent(Integer id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a non-zero integer");
@@ -36,23 +39,28 @@ public class StudentService {
         return studentDao.find(id);
     }
 
+    @ExecutionStatsCustomAspect
     public void saveStudent(Student student) {
         studentDao.save(student);
     }
 
+    @ExecutionStatsCustomAspect
     public void updateStudent(Integer studentId, Student updatedStudent) {
         studentDao.update(studentId, updatedStudent);
     }
 
+    @ExecutionStatsCustomAspect
     @Transactional
     public int updateLastNameInBulk(List<Integer> ids, String lname) {
         return studentDao.updateLastNameInBulk(ids, lname);
     }
 
+    @ExecutionStatsCustomAspect
     public void deleteStudentById(Integer id) {
         studentDao.deleteStudentById(id);
     }
 
+    @ExecutionStatsCustomAspect
     @Transactional
     public int deleteStudents(List<Integer> ids) {
         return studentDao.deleteStudents(ids);

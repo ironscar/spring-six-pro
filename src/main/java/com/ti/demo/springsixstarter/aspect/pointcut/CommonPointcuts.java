@@ -20,8 +20,10 @@ public class CommonPointcuts {
      * static strings to quickly use rather than copying package name + class name + method name
      */
     public static final String POINTCUT_CLASSPATH = "com.ti.demo.springsixstarter.aspect.pointcut.CommonPointcuts.";
+    public static final String POINTCUT_CUSTOM_CLASSPATH = "com.ti.demo.springsixstarter.aspect.custom.";
     public static final String POINTCUT_EXPR_FOR_STUD_SERVICE = POINTCUT_CLASSPATH + "pointcutExprForStudService()";
     public static final String POINTCUT_EXPR_FOR_GETTER_BY_ID = POINTCUT_CLASSPATH + "pointcutExprForGetterById()";
+    public static final String POINTCUT_EXPR_FOR_CUSTOM_EXEC_STATS = "@annotation(" + POINTCUT_CUSTOM_CLASSPATH + "ExecutionStatsCustomAspect)";
 
     /**
      * Pointcut for all methods defined by student service
