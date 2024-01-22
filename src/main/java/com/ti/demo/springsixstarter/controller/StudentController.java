@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +44,9 @@ public class StudentController {
 
     @GetMapping(value = {"", "/"})
     public List<Student> getStudents(
-        @AuthenticationPrincipal User user,
         @RequestParam(name = "fname", required = false, defaultValue = "") String fname,
         @RequestParam(name = "lname", required = false, defaultValue = "") String lname    
     ) {
-        log.info("Auth user: {}", user);
         return studentService.getStudents(fname, lname);
     }
 
