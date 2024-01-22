@@ -11,7 +11,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
 @Repository
-public class StudentHbDao {
+public class StudentDao {
 
     private EntityManager entityManager;
 
@@ -21,7 +21,7 @@ public class StudentHbDao {
      * Constructor which gets autowired with the entity manager
      * since no other parameterized constructors, this is used and doesnt need the annotation
      */
-    public StudentHbDao(EntityManager em, StudentBasicJpaRepository srep) {
+    public StudentDao(EntityManager em, StudentBasicJpaRepository srep) {
         entityManager = em;
         studentRepository = srep;
     }

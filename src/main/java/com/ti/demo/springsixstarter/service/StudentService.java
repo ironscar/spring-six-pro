@@ -5,23 +5,20 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ti.demo.domain.mybatis.xmlsql.Student;
-import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
+import com.ti.demo.domain.hibernate.annotated.Student;
+import com.ti.demo.springsixstarter.dao.hibernate.annotated.StudentDao;
 
-/**
- * Need to update the imports for Student and StudentDao depending on hibernate or mybatis
- */
 @Service
 public class StudentService {
 
-    private StudentMbDao studentDao;
+    private StudentDao studentDao;
 
     /**
      * Method autowired automatically by spring
      * 
      * @param sd - student dao bean
      */
-    public StudentService(StudentMbDao sd) {
+    public StudentService(StudentDao sd) {
         studentDao = sd;
     }
 
