@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ti.demo.domain.mybatis.xmlsql.Student;
 
 @Repository
-public interface StudentMbDao {
+public interface StudentDao {
 
     List<Student> getAll(@Param("fname") String fname, @Param("lname") String lname);
 
