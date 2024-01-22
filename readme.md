@@ -277,8 +277,8 @@ The following was discovered as part of building this project:
 - Figure out how to add: [TODO]
   - all types of http methods and request bodies
   - parallel calls with webclient
-  - DB calls in MongoDB
-  - auth config in MongoDB
+  - DB calls in R2JDBC
+  - auth config in R2JDBC
   - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
 
 ### Caveats
@@ -297,12 +297,10 @@ The following was discovered as part of building this project:
 ## Deep Dive Todo
 
 - Spring Reactive
-- NoSQL 1 (MongoDB)
+- NoSQL (MongoDB / Redis / ScyllaDB / Neo4j)
 - Service communication (RabbitMQ / Kafka / gRPC)
-- API layer 1 (GraphQL / Sockets)
-- NoSQL 2 (Redis / ScyllaDB / Neo4j)
-- Caching (Redis Sentinels)
-- API layer 2 (FTP / SMTP)
+- API layer (GraphQL / Sockets / FTP / SMTP)
+- Caching (Redis & Sentinels)
 - Spring Cloud
 - Spring Security advanced use cases
 - Filters & Interceptors
