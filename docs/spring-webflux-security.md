@@ -7,6 +7,7 @@
 - By default, using `spring.security.user` properties will authenticate every API
 - We can use in-memory user details by creating a bean of type `MapReactiveUserDetailsService` which implements `ReactiveUserDetailsService`
   - the setup is mostly similar to the `InMemoryUserDetailsManager`
+- For now, it works even without the auth for the app3 endpoints but not for actuator [WHY]
 
 ---
 
