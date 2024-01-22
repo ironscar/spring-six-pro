@@ -9,3 +9,12 @@
   - the setup is mostly similar to the `InMemoryUserDetailsManager`
 
 ---
+
+- Figure out how to add: [TODO]
+  - all types of http methods and request bodies
+  - parallel calls with webclient
+  - DB calls in R2JDBC
+  - auth config in R2JDBC
+  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
+
+---
