@@ -1,4 +1,4 @@
-package com.ti.demo.domain.mybatis.xmlsql;
+package com.ti.demo.domain;
 
 import java.io.Serializable;
 
