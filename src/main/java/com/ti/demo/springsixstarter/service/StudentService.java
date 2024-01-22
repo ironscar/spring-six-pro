@@ -1,12 +1,12 @@
 package com.ti.demo.springsixstarter.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.ti.demo.domain.mybatis.xmlsql.Student;
-import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
+import com.ti.demo.domain.Student;
 
 /**
  * Need to update the imports for Student and StudentDao depending on hibernate or mybatis
@@ -14,48 +14,45 @@ import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
 @Service
 public class StudentService {
 
-    private StudentMbDao studentDao;
-
-    /**
-     * Method autowired automatically by spring
-     * 
-     * @param sd - student dao bean
-     */
-    public StudentService(StudentMbDao sd) {
-        studentDao = sd;
-    }
+    private List<Student> students = new ArrayList<>();
 
     public List<Student> getStudents(String fname, String lname) {
-        return studentDao.getAll(fname, lname);
+        return students.stream().filter(student -> fname.equals(student.getFirstName()) && lname.equals(student.getLastName())).collect(Collectors.toList());
     }
 
     public Student getStudent(Integer id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a non-zero integer");
         }
-        return studentDao.find(id);
+        return students.stream().filter(student -> id == student.getId()).findFirst().get();
     }
 
     public void saveStudent(Student student) {
-        studentDao.save(student);
+        student.setId(students.size());
+        students.add(student);
     }
 
     public void updateStudent(Integer studentId, Student updatedStudent) {
-        studentDao.update(studentId, updatedStudent);
+        students.set(studentId, updatedStudent);
     }
-
-    @Transactional
-    public int updateLastNameInBulk(List<Integer> ids, String lname) {
-        return studentDao.updateLastNameInBulk(ids, lname);
+    
+    public void updateLastNameInBulk(List<Integer> ids, String lname) {
+        for (int i = 0 ; i < ids.size(); i++) {
+            int id = ids.get(i);
+            Student toUpdatesStudent = students.get(id);
+            toUpdatesStudent.setLastName(lname);
+        }
     }
 
     public void deleteStudentById(Integer id) {
-        studentDao.deleteStudentById(id);
+        students.remove(id);
     }
 
-    @Transactional
-    public int deleteStudents(List<Integer> ids) {
-        return studentDao.deleteStudents(ids);
+    public void deleteStudents(List<Integer> ids) {
+        for (int i = 0 ; i < ids.size(); i++) {
+            int id = ids.get(i);
+            students.remove(id);
+        }
     }
 
 }
