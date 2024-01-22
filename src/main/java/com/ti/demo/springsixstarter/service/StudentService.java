@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ti.demo.domain.mybatis.xmlsql.Student;
-import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
+import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentDao;
 
 /**
  * Need to update the imports for Student and StudentDao depending on hibernate or mybatis
@@ -14,14 +14,14 @@ import com.ti.demo.springsixstarter.dao.mybatis.xmlsql.StudentMbDao;
 @Service
 public class StudentService {
 
-    private StudentMbDao studentDao;
+    private StudentDao studentDao;
 
     /**
      * Method autowired automatically by spring
      * 
      * @param sd - student dao bean
      */
-    public StudentService(StudentMbDao sd) {
+    public StudentService(StudentDao sd) {
         studentDao = sd;
     }
 

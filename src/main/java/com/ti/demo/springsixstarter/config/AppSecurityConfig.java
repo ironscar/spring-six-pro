@@ -17,8 +17,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@Profile("web")
-public class WebAppSecurityConfig {
+public class AppSecurityConfig {
 
     private static final String STUDENT_BASE_PATH = "/app2/student";
     private static final String STUDENT_BASE_PATH2 = "/app2/student/*";
