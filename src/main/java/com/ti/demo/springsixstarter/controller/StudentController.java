@@ -73,7 +73,7 @@ public class StudentController {
                 studentService.saveStudent(student);
             }
         } catch (Exception e) {
-            throw new StudentException("Request body cannot be null");
+            throw new StudentException(e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class StudentController {
                 studentService.updateStudent(id, updatedStudent);
             }
         } catch (Exception e) {
-            throw new StudentException("Request body and id cannot be null");
+            throw new StudentException(e.getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ public class StudentController {
                 .collect(Collectors.toList());
             studentService.updateLastNameInBulk(actualIds, lname);
         } catch (Exception e) {
-            throw new StudentException("Ids must be valid list of integers");
+            throw new StudentException(e.getMessage());
         }
     }
 
