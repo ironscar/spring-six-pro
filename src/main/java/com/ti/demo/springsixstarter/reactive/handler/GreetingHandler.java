@@ -1,7 +1,9 @@
 package com.ti.demo.springsixstarter.reactive.handler;
 
 import java.util.Date;
+import java.util.List;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import com.ti.demo.domain.exception.StudentErrorResponse;
 import com.ti.demo.domain.exception.StudentException;
 import com.ti.demo.domain.reactive.Greeting;
+import com.ti.demo.springsixstarter.reactive.service.GreetingService;
 
 import reactor.core.publisher.Mono;
 
@@ -20,18 +23,31 @@ import reactor.core.publisher.Mono;
 public class GreetingHandler {
 
     private WebClient client;
+    private GreetingService greetingService;
 
-    GreetingHandler(WebClient client) {
+    GreetingHandler(WebClient client, GreetingService greetingService) {
         this.client = client;
+        this.greetingService = greetingService;
     }
 
-    public Mono<ServerResponse> hello(ServerRequest request) {
+    public Mono<ServerResponse> getGreetings(ServerRequest request) {
         try {
             return Mono.just(
-                new Greeting(
-                    "Hello Reactive Greeting! " + 
-                    request.pathVariable("param1") + "," +
-                    request.queryParam("param2").orElse("default2"))
+                greetingService.getGreetings(request.queryParam("recipient"))
+            ).flatMap(greetings -> ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(greetings)
+            );
+        } catch (Exception e) {
+            throw new StudentException("incorrect usage");
+        }
+    }
+
+    public Mono<ServerResponse> getGreetingById(ServerRequest request) {
+        try {
+            return Mono.just(
+                greetingService.getGreetingById(Integer.parseInt(request.pathVariable("id")))
             ).flatMap(greeting -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -46,21 +62,23 @@ public class GreetingHandler {
         return client
             .get()
             .uri(
-                "/app3/" + 
-                request.pathVariable("path") + "/" +
-                request.pathVariable("param1") +
-                request.queryParam("param2")
+                "/app3/reactive" +
+                request.queryParam("recipient")
                     .map(val -> {
-                        return "?param2=" + val;
+                        return "?recipient=" + val;
                     }).orElse("")
             ).accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(Greeting.class)
-            .flatMap(greeting -> ServerResponse
+            .bodyToMono(new ParameterizedTypeReference<List<Greeting>>() {})
+            .flatMap(greetings -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(
-                    new Greeting(greeting.getMessage().replace("Reactive", "Reactive Client"))
+                    greetings.stream()
+                        .map(greeting -> {
+                            greeting.setMessage("From Client: " + greeting.getMessage());
+                            return greeting;
+                        }).toList()
                 ))
             ).onErrorResume(e -> ServerResponse
             .badRequest()

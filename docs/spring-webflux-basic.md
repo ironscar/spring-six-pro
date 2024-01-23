@@ -9,8 +9,9 @@
 - We also need a `router` to specify what route does the response come from
   - This takes a handler as argument to use in a route
   - Define a single config class with a single bean of `RouterFunctions<ServerResponse>`
-  - You can define multiple routes here with `RouterFunctions.route().andRoute()...`
+  - You can define multiple routes here with `RouterFunctions.route(<predicates>, <handler>).andRoute(<predicates>, <handler>)...` or `RouterFunctions.route().GET(<predicates>, <handler>)...`
   - Each route method internally takes the request predicates like api route, content type etc and the handler method reference
+  - Predicates by default may require `RequestPredicates.` before them but we can just `import static RequestPredicates.*` to use the members directly
 - If multiple handlers, create separate routers for each handler and all related routes can go inside the same router
 - Check examples in package `springsixstarter.reactive`
 
@@ -41,6 +42,18 @@
     - Thus we use `ObjectMapper` to create bytes of our error response body and write it to response
     - This throws exceptions but it shouldn't, so to be safe, we add an error message and convert that to bytes for a single error message if this ever happens
     - This setup also works for the servlet controller endpoint exception handling and you wouldn't need an exception controller either as long as webflux is in dependency, but since that is more concise to write, we will keep it
+
+---
+
+## Web Client
+
+- We can create a web client with specific `baseUrl` in a config class
+- We can use `client.get().uri(<path>).retrieve().bodyToMono(<type>)` to make the API call
+- For usual classes, `bodyToMono` takes the `<Class>.class`
+- For generic classes, we can define a `ParameterizedTypeReference<GenType<InternalType>> () {}`
+- the retuned value is a mono so we can further process it reactively
+
+---
 
 ## Reactive Programming
 
