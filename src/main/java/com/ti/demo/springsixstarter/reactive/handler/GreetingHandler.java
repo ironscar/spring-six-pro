@@ -54,8 +54,7 @@ public class GreetingHandler {
                     request.pathVariable("path") + "/" +
                     request.pathVariable("param1") +
                     request.queryParam("param2").map(val -> "?param2=" + val).orElse("")
-                ).headers(headers -> headers.setBasicAuth(auth.getName(), "johnpass"))
-                .accept(MediaType.APPLICATION_JSON)
+                ).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Greeting.class)
             ).flatMap(greeting -> ServerResponse
