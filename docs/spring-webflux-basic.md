@@ -12,7 +12,16 @@
   - You can define multiple routes here with `RouterFunctions.route(<predicates>, <handler>).andRoute(<predicates>, <handler>)...` or `RouterFunctions.route().GET(<predicates>, <handler>)...`
   - Each route method internally takes the request predicates like api route, content type etc and the handler method reference
   - Predicates by default may require `RequestPredicates.` before them but we can just `import static RequestPredicates.*` to use the members directly
+  - We can do the same for `RouterFunctions` as it has some useful static members
+    - like we can use `RouterFunctions.nest` to specify a base url and common media type etc
+- When specifying paths in router function, take care that there cannot be conflicts
+  - if first is `/reactive/{id}` and second is `/reactive/client`, then second will never happen
+  - because it will attempt to resolve client with the path variable for `id`
+  - so we should order the router accordingly
 - If multiple handlers, create separate routers for each handler and all related routes can go inside the same router
+  - These methods can each take a different handler but they need to be named differently
+  - The name makes sure that there are no bean conflicts in Spring
+  - Finally, if there are path conflicts like `/{id}` and `/client`, then use `@Order` to specify which routes are processed first
 - Check examples in package `springsixstarter.reactive`
 
 ## Reactive Controller
@@ -25,15 +34,17 @@
   - they will always be string and cannot be type-checked
 - Multiple paths for same handler can be specified by 
   - `(RequestPredicates.GET(path1).or(RequestPredicates.GET(path2))).and(...)`
-- For exception handling, we can either do it at a handler level or a global level
 
-- For handler level, `Mono` has multiple error methods like `onErrorReturn`, `onErrorResume` etc
+- For exception handling, we can either do it at a handler level or a global level
+  - For handler level, `Mono` has multiple error methods like `onErrorReturn`, `onErrorResume` etc
     - we can use `onErrorResume` at the end of the chain after the main server response piece
     - here we can use the exception object to return a server response with a custom exception body
     - whenever there is an error at any part of the chain, it will skip the chain till the next error handler and execute it
-    - `[WHY - CHECK NOW]` it only seemed to work for web client usage but not for actual response return
-      - for now, using try/catch but need to figure out how to use the reactive error operators
-
+    - it only seemed to work for web client usage but not for actual response return
+      - this only works if the exception is supplied as a `Mono.error`
+      - throwing a general exception directly will just skip the chain and can only caught by try-catch
+      - But an exception returned in a `Mono.error` will be caught by the `onError` handlers
+      - This is why when there is an error in webclient, it raises it as a `Mono.error` and gets caught by the `onError` handlers
   - For global level, we need to create global error handler component
     - This `GlobalExceptionHandler` implements `WebExceptionHandler` interface and overrides its `handle` method
     - Its set to `Order(-2)` as the default exception handler has order 1 and we want to use this instead

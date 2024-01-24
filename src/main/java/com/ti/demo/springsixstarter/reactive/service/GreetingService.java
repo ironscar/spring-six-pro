@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.ti.demo.domain.reactive.Greeting;
 
+import reactor.core.publisher.Mono;
+
 @Service
 public class GreetingService {
 
@@ -18,14 +20,17 @@ public class GreetingService {
         greetings.add(Greeting.builder().message("Hi 2").recipient("Amy").build());
     }
 
-    public List<Greeting> getGreetings(Optional<String> recipient) {
+    public Mono<List<Greeting>> getGreetings(Optional<String> recipient) {
         return recipient.isPresent()
-            ? greetings.stream().filter(greeting -> recipient.get().equals(greeting.getRecipient())).toList()
-            : greetings;
+            ? Mono.just(greetings.stream().filter(greeting -> recipient.get().equals(greeting.getRecipient())).toList())
+            : Mono.just(greetings);
     }
 
-    public Greeting getGreetingById(int id) {
-        return greetings.get(id);
+    public Mono<Greeting> getGreetingById(int id) {
+        if (id <= 0) {
+            return Mono.error(() -> new IllegalArgumentException("id must be greater than zero"));
+        }
+        return Mono.just(greetings.get(id-1));
     }
     
 }

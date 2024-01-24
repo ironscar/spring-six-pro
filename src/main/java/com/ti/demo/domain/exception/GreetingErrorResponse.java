@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentErrorResponse implements Serializable {
+public class GreetingErrorResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

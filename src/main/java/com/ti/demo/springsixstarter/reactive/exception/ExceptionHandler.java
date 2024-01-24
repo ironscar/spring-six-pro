@@ -10,8 +10,8 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ti.demo.domain.exception.StudentErrorResponse;
-import com.ti.demo.domain.exception.StudentException;
+import com.ti.demo.domain.exception.GreetingErrorResponse;
+import com.ti.demo.domain.exception.GreetingException;
 
 import reactor.core.publisher.Mono;
 
@@ -27,11 +27,11 @@ public class ExceptionHandler implements WebExceptionHandler {
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        if (ex instanceof StudentException) {
+        if (ex instanceof GreetingException) {
             exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
             return returnWithExchangeBody(
                 exchange,
-                StudentErrorResponse.builder()
+                GreetingErrorResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message(ex.getMessage())
                     .timestamp(new Date())
@@ -48,7 +48,7 @@ public class ExceptionHandler implements WebExceptionHandler {
      * @param errorResponse - error response
      * @return - Mono
      */
-    private Mono<Void> returnWithExchangeBody(ServerWebExchange exchange, StudentErrorResponse errorResponse) {
+    private Mono<Void> returnWithExchangeBody(ServerWebExchange exchange, GreetingErrorResponse errorResponse) {
         return exchange.getResponse().writeWith(Mono.just(setExchangeBody(exchange, errorResponse)));
     }
 
@@ -59,7 +59,7 @@ public class ExceptionHandler implements WebExceptionHandler {
      * @param errorResponse - the error response
      * @return - response bytes as data buffer
      */
-    private DataBuffer setExchangeBody(ServerWebExchange exchange, StudentErrorResponse errorResponse) {
+    private DataBuffer setExchangeBody(ServerWebExchange exchange, GreetingErrorResponse errorResponse) {
         try {
             return exchange.getResponse().bufferFactory().wrap(mapper.writeValueAsBytes(errorResponse));
         } catch (Exception e) {
