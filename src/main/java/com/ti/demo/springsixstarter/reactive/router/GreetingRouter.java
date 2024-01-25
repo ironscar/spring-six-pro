@@ -2,6 +2,7 @@ package com.ti.demo.springsixstarter.reactive.router;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.*;
+import static com.ti.demo.springsixstarter.util.SpringSixConstants.*;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,12 @@ public class GreetingRouter {
                 accept(MediaType.APPLICATION_JSON),
                 route()
                     .GET(path("").or(path("/")), handler::getGreetings)
-                    .GET(path("/{id}").or(path("/{id}/")), handler::getGreetingById)
+                    .GET(path(ID_PLACEHOLDER1).or(path(ID_PLACEHOLDER2)), handler::getGreetingById)
+                    .POST(path("").or(path("/")), handler::saveGreeting)
+                    .PUT(path(ID_PLACEHOLDER1).or(path(ID_PLACEHOLDER2)), handler::updateGreeting)
+                    .PUT(path("").or(path("/")), handler::updateGreetings)
+                    .DELETE(path(ID_PLACEHOLDER1).or(path(ID_PLACEHOLDER2)), handler::deleteGreetingById)
+                    .DELETE(path("").or(path("/")), handler::deleteGreetings)
                     .build()
             ));
     }
