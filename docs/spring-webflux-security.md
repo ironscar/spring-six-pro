@@ -14,6 +14,18 @@
 
 ---
 
+## Caveats
+
+- Security setup sometimes doesn't work if you have a jar running inside a docker container
+- This happens due to external jars which can be found on system by default but not on docker image
+- To address this, we add the following to `spring-boot-maven-plugin` in `pom.xml` plugins
+
+```
+<includeSystemScope>true</includeSystemScope>
+```
+
+---
+
 - Figure out how to add: [TODO]
   - all types of http methods and request bodies
   - parallel calls with webclient
