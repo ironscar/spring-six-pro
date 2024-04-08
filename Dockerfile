@@ -4,9 +4,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
 ARG VERSION
-COPY target/spring-six-starter-${VERSION}/WEB-INF/lib /app/lib
-COPY target/spring-six-starter-${VERSION}/META-INF /app/META-INF
-COPY target/spring-six-starter-${VERSION}/WEB-INF/classes /app
+COPY target/spring-six-starter-${VERSION}.war /app/spring-six-starter.war
 
-ENTRYPOINT [ "java", "-cp", "app:app/lib/*", "com.ti.demo.springsixstarter.SpringSixStarterApplication" ]
+ENTRYPOINT [ "java", "-jar", "app/spring-six-starter.war" ]
 EXPOSE 8081
