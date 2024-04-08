@@ -34,11 +34,16 @@ The following was discovered as part of building this project:
 - Ansible and Jenkins pretty much use the same setup apart from slave being used with jdk 17 now
 - As for mysql, we will create a container on the `inventory/db` vm (which doesn't have user permissions for docker so we use it with sudo)
   - Run `sudo mkdir -p /datadir/mysql1`
-  - Run `sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v /datadir/mysql1:/var/lib/mysql --name mysql1 mysql`
+  - Run `sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v /datadir/docker.cnf:/etc/mysql/conf.d/docker.cnf -v /datadir/mysql1:/var/lib/mysql --name mysql1 mysql`
     - The `-v` is another way of creating a volume and mapping it to a specific directory (we do this to maintain data in the volume)
     - It wasn't working with `512MB` of memory on the VM so increased it to `768MB` and now server starts and keeps running
       - the error said `inappropriate ioctl for device`
-    - Troubleshoot connection from workbench on host to mysql container on VM [TODO]
+    - Troubleshoot connection from workbench on host to mysql container on VM
+      - this works for root but not for other users due to two reasons
+        - the mysql container default enables `skip-name-resolve` which also cannot be disabled from outside without overriding configurations
+        - the mysql user needs to specify the hosts from which it can connect, for our case that is essentially all hosts `%`
+        - this also failed the `GRANT` statement for similar reasons but using `%` works
+        - more specifically, we should create two users, one for host `192.168.0.103` which is our actual host and one for `192.168.0.106` which is our stage app server
     - Troubleshoot connection from actual app container deployed by ansible on `app1` to mysql container on `db` [TODO]
 
 ---

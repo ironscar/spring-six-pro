@@ -1,13 +1,16 @@
 -- ------------------------- CREATE USERS -------------------------------
 
 -- drop user first if they exist
-DROP USER if exists 'springstudent'@'localhost' ;
+DROP USER if exists 'springstudent'@'%' ;
 
 -- create user with proper privileges (for now all)
-CREATE USER 'springstudent'@'localhost' IDENTIFIED BY 'springstudent';
+CREATE USER 'springstudent'@'%' IDENTIFIED BY 'springstudent';
 
 -- grant all privileges
-GRANT ALL PRIVILEGES ON * . * TO 'springstudent'@'localhost';
+GRANT ALL PRIVILEGES ON * . * TO 'springstudent'@'%';
+
+-- get all users in mysql server
+SELECT* from mysql.user;
 
 -- ------------------------- CREATE DATABASES -------------------------------
 
