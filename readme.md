@@ -37,6 +37,7 @@ The following was discovered as part of building this project:
   - Run `sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v /datadir/mysql1:/var/lib/mysql --name mysql1 mysql`
     - The `-v` is another way of creating a volume and mapping it to a specific directory (we do this to maintain data in the volume)
     - It wasn't working with `512MB` of memory on the VM so increased it to `768MB` and now server starts and keeps running
+      - the error said `inappropriate ioctl for device`
     - Troubleshoot connection from workbench on host to mysql container on VM [TODO]
     - Troubleshoot connection from actual app container deployed by ansible on `app1` to mysql container on `db` [TODO]
 
