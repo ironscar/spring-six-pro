@@ -28,6 +28,20 @@ The following was discovered as part of building this project:
 
 ---
 
+## Containerization & Deployment details
+
+- Jenkinsfile and Dockerfile details are similar to Container-demo project
+- Ansible and Jenkins pretty much use the same setup apart from slave being used with jdk 17 now
+- As for mysql, we will create a container on the `inventory/db` vm (which doesn't have user permissions for docker so we use it with sudo)
+  - Run `sudo mkdir -p /datadir/mysql1`
+  - Run `sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v /datadir/mysql1:/var/lib/mysql --name mysql1 mysql`
+    - The `-v` is another way of creating a volume and mapping it to a specific directory (we do this to maintain data in the volume)
+    - It wasn't working with `512MB` of memory on the VM so increased it to `768MB` and now server starts and keeps running
+    - Troubleshoot connection from workbench on host to mysql container on VM [TODO]
+    - Troubleshoot connection from actual app container deployed by ansible on `app1` to mysql container on `db` [TODO]
+
+---
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
