@@ -44,7 +44,7 @@ The following was discovered as part of building this project:
         - the mysql user needs to specify the hosts from which it can connect, for our case that is essentially all hosts `%`
         - this also failed the `GRANT` statement for similar reasons but using `%` works
         - more specifically, we should create two users, one for host `192.168.0.103` which is our actual host and one for `192.168.0.106` which is our stage app server
-    - Troubleshoot connection from actual app container deployed by ansible on `app1` to mysql container on `db` [TODO]
+    - Connecting between actual container and mysql container timing out [FIX]
 
 ---
 
