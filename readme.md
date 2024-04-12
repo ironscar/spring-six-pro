@@ -50,7 +50,9 @@ The following was discovered as part of building this project:
         - so we set a datasource bean manually in a new configuration class
         - for passing the build, we create a test datasource bean in the same configuration class with random values for now, later we can update it with H2
         - we also need to mark active profile as `test` in `test/resources/applications.properties` and then choose between the datasource beans on the basis of this profile
-      - even after props are set, there is a connection link failure between the two VMs [FIX]
+      - even after props are set, there is a connection link failure between the two VMs
+        - we use the IP to test out first as VM may not know what domain it is and `/etc/hosts` was not editable in the docker container
+        - IPs work but in a cloud native world, IPs can change so we should eventually try to make it work with domain names as well [TODO]
 
 ---
 
