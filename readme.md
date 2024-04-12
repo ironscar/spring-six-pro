@@ -44,7 +44,12 @@ The following was discovered as part of building this project:
         - the mysql user needs to specify the hosts from which it can connect, for our case that is essentially all hosts `%`
         - this also failed the `GRANT` statement for similar reasons but using `%` works
         - more specifically, we should create two users, one for host `192.168.0.103` which is our actual host and one for `192.168.0.106` which is our stage app server
-    - Connecting between actual container and mysql container timing out [FIX]
+    - Connecting between actual container and mysql container timing out
+      - the spring boot props aren't getting set from environment properties properly
+        - because datasource resolution is happening before value resolution just like constructor happening before value resolution
+        - so we set a datasource bean manually in a new configuration class
+        - for passing the build, we create a test datasource bean in the same configuration class with random values for now, later we can update it with H2
+        - we also need to mark active profile as `test` in `test/resources/applications.properties` and then choose between the datasource beans on the basis of this profile
 
 ---
 
