@@ -8,9 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Configuration
 public class AppConfig {
 
@@ -21,7 +18,6 @@ public class AppConfig {
         @Value("${app_sql_db_user}") String user,
         @Value("${app_sql_db_pass}") String pass
     ) {
-        log.info("{}, {}, {}", url, user);
         return DataSourceBuilder.create().url(url).username(user).password(pass).build();
     }
 
@@ -32,7 +28,6 @@ public class AppConfig {
         @Value("test-user") String user,
         @Value("test-pass") String pass
     ) {
-        log.info("{}, {}, {}", url, user);
         return DataSourceBuilder.create().url(url).username(user).password(pass).build();
     }
     
