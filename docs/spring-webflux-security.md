@@ -14,6 +14,12 @@
 
 ---
 
+## Reactive CRUD operations
+
+- Setup the main Getter for students
+
+---
+
 ## Caveats
 
 - Security setup sometimes doesn't work if you have a jar running inside a docker container

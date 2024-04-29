@@ -14,7 +14,7 @@ import com.ti.demo.springsixstarter.reactive.handler.GreetingHandler;
 public class GreetingRouter {
 
     @Bean
-    public RouterFunction<ServerResponse> route(GreetingHandler handler) {
+    public RouterFunction<ServerResponse> greetingApiRoutes(GreetingHandler handler) {
         return RouterFunctions
             .route((
                     RequestPredicates.GET("/app3/reactive/{param1}")
