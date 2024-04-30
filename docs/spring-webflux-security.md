@@ -12,11 +12,17 @@
   - so instead we want to specifically permit for all non-auth endpoints and then do `anyExchange.authenticated()`
   - authenticated endpoints can continue defining roles and then it will return 401 if no auth, 403 if wrong role and 200 if correct role
 
+- As for using passwords directly out of Spring, it is not recommended by the Spring team
+- Passwords are always stored and accessible only in the encoded format so there is no way to reuse the password based on user even if the current call is authenticated
+- As a result, we will create a new internal user that will have all roles and will be used for all webclient calls
+- The actual APIs that use webClient will still be authorized based on the existing non-intenral users
+- This internal user will only be used by the application and no actual client
+
 ---
 
 ## Reactive CRUD operations
 
-- Setup the main Getter for students
+- Implemented the main Getter for students
 
 ---
 
@@ -33,10 +39,8 @@
 ---
 
 - Figure out how to add: [TODO]
-  - all types of http methods and request bodies
   - parallel calls with webclient
   - DB calls in R2JDBC
   - auth config in R2JDBC
-  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
 
 ---

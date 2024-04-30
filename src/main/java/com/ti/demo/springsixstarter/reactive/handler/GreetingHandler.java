@@ -2,6 +2,7 @@ package com.ti.demo.springsixstarter.reactive.handler;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -21,6 +22,12 @@ import reactor.core.publisher.Mono;
 public class GreetingHandler {
 
     private WebClient client;
+
+    @Value("${app.internal.user}")
+    private String internalUser;
+
+    @Value("${app.internal.password}")
+    private String internalPass;
 
     GreetingHandler(WebClient client) {
         this.client = client;
@@ -55,6 +62,7 @@ public class GreetingHandler {
                     request.pathVariable("param1") +
                     request.queryParam("param2").map(val -> "?param2=" + val).orElse("")
                 ).accept(MediaType.APPLICATION_JSON)
+                .headers(headers -> headers.setBasicAuth(internalUser, internalPass))
                 .retrieve()
                 .bodyToMono(Greeting.class)
             ).flatMap(greeting -> ServerResponse
