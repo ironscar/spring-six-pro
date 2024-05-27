@@ -80,7 +80,7 @@ insert into custom_authorities (userid, role) values ('prince', 'ADMIN');
 
 -- ------------------------ CLEANUP ------------------------
 
-# to delete records if required from security tables
+-- to delete records if required from security tables
 delete from authorities where username in ('john', 'amy', 'prince');
 delete from users where username in ('john', 'amy', 'prince');
 drop table authorities;
