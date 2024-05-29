@@ -21,7 +21,7 @@ public class GreetingRouter {
     @Order(2)
     public RouterFunction<ServerResponse> apiRoutes(GreetingHandler handler) {
         return nest(
-            path("/app3/reactive"),
+            path("/reactive/app3/greeting"),
             nest(
                 accept(MediaType.APPLICATION_JSON),
                 route()
@@ -47,7 +47,7 @@ public class GreetingRouter {
     @Order(1)
     public RouterFunction<ServerResponse> clientRoutes(GreetingClientHandler clientHandler) {
         return nest(
-            path("/app3/reactive/client"),
+            path("/reactive/app3/greeting/client"),
             nest(
                 accept(MediaType.APPLICATION_JSON),
                 route()

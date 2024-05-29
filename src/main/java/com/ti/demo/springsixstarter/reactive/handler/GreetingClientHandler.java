@@ -30,7 +30,7 @@ public class GreetingClientHandler {
         return client
             .get()
             .uri(
-                "/app3/reactive" +
+                "/reactive/app3/greeting" +
                 request.queryParam("recipient")
                     .map(val -> {
                         return "?recipient=" + val;
