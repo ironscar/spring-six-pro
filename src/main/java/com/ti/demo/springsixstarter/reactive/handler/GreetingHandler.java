@@ -5,7 +5,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -51,21 +50,18 @@ public class GreetingHandler {
     }
 
     public Mono<ServerResponse> helloClient(ServerRequest request) {
-        return ReactiveSecurityContextHolder
-            .getContext()
-            .flatMap(context -> Mono.just(context.getAuthentication())
-            ).flatMap(auth -> client
-                .get()
-                .uri(
-                    "/reactive/app3/" + 
-                    request.pathVariable("path") + "/" +
-                    request.pathVariable("param1") +
-                    request.queryParam("param2").map(val -> "?param2=" + val).orElse("")
-                ).accept(MediaType.APPLICATION_JSON)
-                .headers(headers -> headers.setBasicAuth(internalUser, internalPass))
-                .retrieve()
-                .bodyToMono(Greeting.class)
-            ).flatMap(greeting -> ServerResponse
+        return client
+            .get()
+            .uri(
+                "/reactive/app3/" + 
+                request.pathVariable("path") + "/" +
+                request.pathVariable("param1") +
+                request.queryParam("param2").map(val -> "?param2=" + val).orElse("")
+            ).accept(MediaType.APPLICATION_JSON)
+            .headers(headers -> headers.setBasicAuth(internalUser, internalPass))
+            .retrieve()
+            .bodyToMono(Greeting.class)
+            .flatMap(greeting -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(
