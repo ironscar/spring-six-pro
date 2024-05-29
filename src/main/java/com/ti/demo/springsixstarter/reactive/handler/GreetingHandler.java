@@ -57,7 +57,7 @@ public class GreetingHandler {
             ).flatMap(auth -> client
                 .get()
                 .uri(
-                    "/app3/" + 
+                    "/reactive/app3/" + 
                     request.pathVariable("path") + "/" +
                     request.pathVariable("param1") +
                     request.queryParam("param2").map(val -> "?param2=" + val).orElse("")

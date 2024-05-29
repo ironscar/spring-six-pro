@@ -18,8 +18,8 @@ public class StudentRouter {
     @Bean
     public RouterFunction<ServerResponse> studentApiRoutes(StudentHandler handler) {
         return route((
-            (GET("/app2/student")
-                .or(GET("/app2/student/"))
+            (GET("/reactive/app2/student")
+                .or(GET("/reactive/app2/student/"))
             ).and(accept(MediaType.APPLICATION_JSON))
         ), handler::getStudents);
     }

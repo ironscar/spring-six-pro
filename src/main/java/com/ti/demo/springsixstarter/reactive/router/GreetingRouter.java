@@ -17,13 +17,13 @@ public class GreetingRouter {
     public RouterFunction<ServerResponse> greetingApiRoutes(GreetingHandler handler) {
         return RouterFunctions
             .route((
-                    RequestPredicates.GET("/app3/reactive/{param1}")
-                    .or(RequestPredicates.GET("/app3/reactive/{param1}/"))
+                    RequestPredicates.GET("/reactive/app3/greeting/{param1}")
+                    .or(RequestPredicates.GET("/reactive/app3/greeting/{param1}/"))
                 ).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 handler::hello
             ).andRoute((
-                    RequestPredicates.GET("/app3/{path}/client/{param1}")
-                    .or(RequestPredicates.GET("/app3/{path}/client/{param1}/"))
+                    RequestPredicates.GET("/reactive/app3/{path}/client/{param1}")
+                    .or(RequestPredicates.GET("/reactive/app3/{path}/client/{param1}/"))
                 ).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 handler::helloClient
             );

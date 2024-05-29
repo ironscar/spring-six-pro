@@ -38,9 +38,9 @@ public class AppSecurityConfig {
         return http
             .authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
-                .pathMatchers(HttpMethod.GET, "/app3/reactive/client/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
-                .pathMatchers(HttpMethod.GET, "/app3/reactive/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
-                .pathMatchers(HttpMethod.GET, "/app2/student", "/app2/student/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/client/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.GET, "/reactive/app2/student", "/reactive/app2/student/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
                 .anyExchange().authenticated())
             .httpBasic(Customizer.withDefaults())
             .csrf(CsrfSpec::disable)
