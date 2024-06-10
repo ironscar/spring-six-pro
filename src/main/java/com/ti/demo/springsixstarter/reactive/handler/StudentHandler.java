@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.ti.demo.domain.exception.StudentErrorResponse;
 import com.ti.demo.domain.exception.StudentException;
+import com.ti.demo.domain.reactive.Student;
 import com.ti.demo.springsixstarter.service.StudentService;
 
 import reactor.core.publisher.Mono;
@@ -58,6 +59,26 @@ public class StudentHandler {
         } catch (Exception e) {
             throw new StudentException(request.path() + "::" + e.getMessage());
         }
+    }
+
+    public Mono<ServerResponse> saveStudent(ServerRequest request) {
+        try {
+            return request.bodyToMono(Student.class)
+                .flatMap(student -> studentService.saveStudent(student))
+                .then(ServerResponse.ok().build())
+                .onErrorResume(error -> ServerResponse
+                    .badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(StudentErrorResponse
+                        .builder()
+                        .status(HttpStatus.BAD_REQUEST)
+                        .message(error.getMessage())
+                        .timestamp(new Date())
+                        .build())
+                );
+        } catch (Exception e) {
+            throw new StudentException(request.path() + "::" + e.getMessage());
+        }     
     }
 
 }

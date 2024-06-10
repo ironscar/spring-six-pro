@@ -50,4 +50,13 @@ public class StudentService {
         return student == null ? Mono.error(new NoSuchElementException("No matching student")) : Mono.just(student);
     }
 
+    public Mono<Void> saveStudent(Student newStudent) {
+        if (!(StringUtils.hasText(newStudent.getFirstName()) && StringUtils.hasText(newStudent.getLastName()))) {
+            return Mono.error(new IllegalArgumentException("Names cannot be null"));
+        }
+        newStudent.setId(students.size());
+        students.add(newStudent);
+        return Mono.empty();
+    }
+
 }

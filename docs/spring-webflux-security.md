@@ -23,6 +23,9 @@
 ## Reactive CRUD operations
 
 - Implemented the main Getter for students
+- If need to return nothing via mono, we can use `Mono<Void>` as return type and `Mono.empty()` as value
+  - Useful if errors are in Mono but no success values are needed
+  - If we do this, we cannot use `flatMap(mono -> Mono<>)` and instead we can use `.then(Mono<>)`
 
 ---
 

@@ -18,12 +18,12 @@ public class StudentRouter {
 
     @Bean
     public RouterFunction<ServerResponse> studentApiRoutes(StudentHandler handler) {
-
         return nest(
             path("/reactive/app2/student").and(accept(MediaType.APPLICATION_JSON)),
             route()
                 .GET(path("").or(path("/")), handler::getStudents)
                 .GET(path("/{id}").or(path("/{id}/")), handler::getStudentById)
+                .POST(path("").or(path("/")), handler::saveStudent)
                 .build()
         );
     }
