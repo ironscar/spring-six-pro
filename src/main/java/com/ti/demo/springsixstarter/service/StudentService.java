@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.ti.demo.domain.reactive.Student;
@@ -54,8 +55,19 @@ public class StudentService {
         if (!(StringUtils.hasText(newStudent.getFirstName()) && StringUtils.hasText(newStudent.getLastName()))) {
             return Mono.error(new IllegalArgumentException("Names cannot be null"));
         }
-        newStudent.setId(students.size());
+        int newIndex = !students.isEmpty() ? students.get(students.size()-1).getId() + 1 : 1;
+        newStudent.setId(newIndex);
         students.add(newStudent);
+        return Mono.empty();
+    }
+
+    public Mono<Void> deleteStudents(List<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Mono.error(new IllegalArgumentException("ids must not be empty"));
+        }
+        if (!students.removeIf(student -> ids.contains(student.getId()))) {
+            return Mono.error(new NoSuchElementException("no students found"));
+        }
         return Mono.empty();
     }
 

@@ -24,6 +24,8 @@ public class StudentRouter {
                 .GET(path("").or(path("/")), handler::getStudents)
                 .GET(path("/{id}").or(path("/{id}/")), handler::getStudentById)
                 .POST(path("").or(path("/")), handler::saveStudent)
+                .DELETE(path("/{id}").or(path("/{id}/")), handler::deleteStudentById)
+                .DELETE(path("").or(path("/")), handler::deleteStudentsInBulk)
                 .build()
         );
     }

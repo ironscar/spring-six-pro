@@ -1,7 +1,10 @@
 package com.ti.demo.springsixstarter.reactive.handler;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -46,16 +49,7 @@ public class StudentHandler {
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(student)
-                ).onErrorResume(error -> ServerResponse
-                    .badRequest()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(StudentErrorResponse
-                        .builder()
-                        .status(HttpStatus.BAD_REQUEST)
-                        .message(error.getMessage())
-                        .timestamp(new Date())
-                        .build())
-                );
+                ).onErrorResume(this::buildErrorResponse);
         } catch (Exception e) {
             throw new StudentException(request.path() + "::" + e.getMessage());
         }
@@ -66,19 +60,45 @@ public class StudentHandler {
             return request.bodyToMono(Student.class)
                 .flatMap(student -> studentService.saveStudent(student))
                 .then(ServerResponse.ok().build())
-                .onErrorResume(error -> ServerResponse
-                    .badRequest()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(StudentErrorResponse
-                        .builder()
-                        .status(HttpStatus.BAD_REQUEST)
-                        .message(error.getMessage())
-                        .timestamp(new Date())
-                        .build())
-                );
+                .onErrorResume(this::buildErrorResponse);
         } catch (Exception e) {
             throw new StudentException(request.path() + "::" + e.getMessage());
         }     
+    }
+
+    public Mono<ServerResponse> deleteStudentById(ServerRequest request) {
+        try {
+            List<Integer> ids = new ArrayList<>();
+            ids.add(Integer.parseInt(request.pathVariable("id")));
+            return studentService.deleteStudents(ids)
+                .then(ServerResponse.ok().build())
+                .onErrorResume(this::buildErrorResponse);
+        } catch (Exception e) {
+            throw new StudentException(request.path() + "::" + e.getMessage());
+        }
+    }
+
+    public Mono<ServerResponse> deleteStudentsInBulk(ServerRequest request) {
+        try {
+            return request.bodyToMono(new ParameterizedTypeReference<List<Integer>>() {})
+                .flatMap(ids -> studentService.deleteStudents(ids))
+                .then(ServerResponse.ok().build())
+                .onErrorResume(this::buildErrorResponse);
+        } catch (Exception e) {
+            throw new StudentException(request.path() + "::" + e.getMessage());
+        }
+    }
+
+    private Mono<ServerResponse> buildErrorResponse(Throwable error) {
+        return ServerResponse
+            .badRequest()
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(StudentErrorResponse
+                .builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(error.getMessage())
+                .timestamp(new Date())
+                .build());
     }
 
 }

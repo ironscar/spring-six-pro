@@ -20,6 +20,7 @@ public class AppSecurityConfig {
     private static final String ROLE_STUDENT = "STUDENT";
     private static final String ROLE_TEACHER = "TEACHER";
     private static final String ROLE_ADMIN = "ADMIN";
+    private static final String STUDENT_URL = "/reactive/app2/student";
 
     @Value("${app.internal.user}")
     private String internalUser;
@@ -40,7 +41,10 @@ public class AppSecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/client/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
-                .pathMatchers(HttpMethod.GET, "/reactive/app2/student", "/reactive/app2/student/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.GET, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.POST, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.PUT, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.DELETE, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_ADMIN)
                 .anyExchange().authenticated())
             .httpBasic(Customizer.withDefaults())
             .csrf(CsrfSpec::disable)
