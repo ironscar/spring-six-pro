@@ -21,6 +21,8 @@ public class StudentService {
     static {
         students.add(Student.builder().id(1).firstName("Nora").lastName("Barnes").email("nbarnes@hzn.com").build());
         students.add(Student.builder().id(2).firstName("Kora").lastName("Barnes").email("kbarnes@hzn.com").build());
+        students.add(Student.builder().id(3).firstName("Dora").lastName("Bell").email("dbell@hzn.com").build());
+        students.add(Student.builder().id(4).firstName("Christia").lastName("Bell").email("cbell@hzn.com").build());
     }
 
     public Mono<List<Student>> getStudents(String fname, String lname) {

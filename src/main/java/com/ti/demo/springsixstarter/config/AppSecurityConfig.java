@@ -42,6 +42,7 @@ public class AppSecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/client/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN)
+                .pathMatchers(HttpMethod.POST, STUDENT_URL + "/client", STUDENT_URL + "/client/*").hasAnyRole(ROLE_ADMIN)
                 .pathMatchers(HttpMethod.POST, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.PUT, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.DELETE, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_ADMIN)

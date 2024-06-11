@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.ti.demo.springsixstarter.reactive.handler.StudentClientHandler;
 import com.ti.demo.springsixstarter.reactive.handler.StudentHandler;
 
 @Configuration
@@ -28,6 +29,16 @@ public class StudentRouter {
                 .DELETE(path("").or(path("/")), handler::deleteStudentsInBulk)
                 .PUT(path("/{id}").or(path("/{id}/")), handler::updateStudent)
                 .PUT(path("").or(path("/")), handler::updateStudents)
+                .build()
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> studentWebClientRoutes(StudentClientHandler handler) {
+        return nest(
+            path("/reactive/app2/student/client").and(accept(MediaType.APPLICATION_JSON)),
+            route()
+                .POST(path("").or(path("/")), handler::complexClientOperation)
                 .build()
         );
     }
