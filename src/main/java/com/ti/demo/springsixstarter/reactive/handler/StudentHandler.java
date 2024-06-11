@@ -1,6 +1,8 @@
 package com.ti.demo.springsixstarter.reactive.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -82,6 +85,32 @@ public class StudentHandler {
         try {
             return request.bodyToMono(new ParameterizedTypeReference<List<Integer>>() {})
                 .flatMap(ids -> studentService.deleteStudents(ids))
+                .then(ServerResponse.ok().build())
+                .onErrorResume(this::buildErrorResponse);
+        } catch (Exception e) {
+            throw new StudentException(request.path() + "::" + e.getMessage());
+        }
+    }
+
+    public Mono<ServerResponse> updateStudent(ServerRequest request) {
+        try {
+            String id = request.pathVariable("id");
+            Integer actualId = StringUtils.hasLength(id) ? Integer.parseInt(id) : null;
+            return request.bodyToMono(Student.class)
+                .flatMap(student -> studentService.updateStudent(actualId, student))
+                .then(ServerResponse.ok().build())
+                .onErrorResume(this::buildErrorResponse);
+        } catch (Exception e) {
+            throw new StudentException(request.path() + "::" + e.getMessage());
+        }
+    }
+
+    public Mono<ServerResponse> updateStudents(ServerRequest request) {
+        try {
+            String ids = request.queryParam("ids").orElse(null);
+            String lastName = request.queryParam("lname").orElse(null);
+            List<String> idList = ids == null ? Collections.emptyList() : Arrays.asList(ids.split(","));
+            return studentService.updateStudents(idList, lastName)
                 .then(ServerResponse.ok().build())
                 .onErrorResume(this::buildErrorResponse);
         } catch (Exception e) {

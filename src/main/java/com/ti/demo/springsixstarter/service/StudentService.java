@@ -71,4 +71,43 @@ public class StudentService {
         return Mono.empty();
     }
 
+    public Mono<Void> updateStudent(Integer id, Student updatedDetails) {
+        if (id == null || updatedDetails.getFirstName() == null || updatedDetails.getLastName() == null) {
+            return Mono.error(new IllegalArgumentException("Names or Id cannot be null"));
+        }
+        Student student = students
+            .stream()
+            .filter(stud -> id.equals(stud.getId()))
+            .findFirst()
+            .orElse(null);
+        if (student == null) {
+            return Mono.error(new NoSuchElementException("id does not exist"));
+        }
+        student.setEmail(updatedDetails.getEmail());
+        student.setFirstName(updatedDetails.getFirstName());
+        student.setLastName(updatedDetails.getLastName());
+        return Mono.empty();
+    }
+
+    public Mono<Void> updateStudents(List<String> ids, String lastName) {
+        if (CollectionUtils.isEmpty(ids) || lastName == null) {
+            return Mono.error(new IllegalArgumentException("ids or name must not be null"));
+        }
+        int count = 0;
+        for (int i = 0 ; i < students.size() ; i++) {
+            Student student = students.get(i);
+            if (ids.contains(student.getId().toString())) {
+                student.setLastName(lastName);
+                count++;
+            }
+            if (count == ids.size()) {
+                break;
+            }
+        }
+        if (count == 0) {
+            return Mono.error(new NoSuchElementException("ids don't exist"));
+        }
+        return Mono.empty();
+    }
+
 }
