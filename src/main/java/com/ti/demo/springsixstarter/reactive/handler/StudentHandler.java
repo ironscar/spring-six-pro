@@ -32,6 +32,8 @@ public class StudentHandler {
 
     public Mono<ServerResponse> getStudents(ServerRequest request) {
         try {
+            // added for web client async check
+            Thread.sleep(1000);
             return studentService.getStudents(
                 request.queryParam("fname").orElse(null),
                 request.queryParam("lname").orElse(null)
@@ -47,6 +49,8 @@ public class StudentHandler {
 
     public Mono<ServerResponse> getStudentById(ServerRequest request) {
         try {
+            // added for web client async check
+            Thread.sleep(500);
             return studentService.getStudentById(Integer.parseInt(request.pathVariable("id")))
                 .flatMap(student -> ServerResponse
                     .ok()
@@ -60,6 +64,8 @@ public class StudentHandler {
 
     public Mono<ServerResponse> saveStudent(ServerRequest request) {
         try {
+            // added for web client async check
+            Thread.sleep(2000);
             return request.bodyToMono(Student.class)
                 .flatMap(student -> studentService.saveStudent(student))
                 .then(ServerResponse.ok().build())
@@ -71,6 +77,8 @@ public class StudentHandler {
 
     public Mono<ServerResponse> deleteStudentById(ServerRequest request) {
         try {
+            // added for web client async check
+            Thread.sleep(1500);
             List<Integer> ids = new ArrayList<>();
             ids.add(Integer.parseInt(request.pathVariable("id")));
             return studentService.deleteStudents(ids)
@@ -107,6 +115,8 @@ public class StudentHandler {
 
     public Mono<ServerResponse> updateStudents(ServerRequest request) {
         try {
+            // added for web client async check
+            Thread.sleep(2000);
             String ids = request.queryParam("ids").orElse(null);
             String lastName = request.queryParam("lname").orElse(null);
             List<String> idList = ids == null ? Collections.emptyList() : Arrays.asList(ids.split(","));

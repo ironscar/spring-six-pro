@@ -29,6 +29,20 @@
 
 ---
 
+## Complex web client operations
+
+- Reactive opeartors allow for better thread usage
+- In `StudentClientHandler.java` class, we show an example of how to achieve multiple asynchronous calls
+  - first parallel operation is inserting an object in DB (static class variable)
+  - second parallel operation is fetching an object from DB by id and then deleting it
+  - third parallel operation is fetching multiple objects from DB and bulk updating them
+- We add logs at the start and end of each operation, and also in the middle for op2 and op3
+  - it creates upto 4 threads and executes the operations in parallel as seen in terminal logs
+  - we can make it more obvious by adding `Thread.sleep(xxx)` in the `StudentHandler` methods
+- If one of these fails, the entire request gets blocked instead of failing [FIX]
+
+---
+
 ## Caveats
 
 - Security setup sometimes doesn't work if you have a jar running inside a docker container
