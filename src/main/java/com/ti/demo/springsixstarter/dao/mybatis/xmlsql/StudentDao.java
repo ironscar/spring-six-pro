@@ -23,6 +23,8 @@ public interface StudentDao {
 
     int updateLastNameInBulk(@Param("ids") List<Integer> ids, @Param("lname") String lname);
 
+    int updateFirstNameInBulk(@Param("ids") List<Integer> ids, @Param("fname") String fname);
+
     @Transactional
     void deleteStudentById(@Param("id") Integer id);
 

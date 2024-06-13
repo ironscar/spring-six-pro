@@ -54,6 +54,17 @@
         </foreach>
     </update>
 
+    <update id="updateFirstNameInBulk">
+        update student
+            <set>
+                first_name = #{fname}
+            </set>
+        where id in 
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
     <delete id="deleteStudentById">
         delete from student where id = #{id}
     </delete>

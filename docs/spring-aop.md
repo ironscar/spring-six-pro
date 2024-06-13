@@ -36,3 +36,23 @@
   - Using this annotation on methods will directly apply the aspect on them now
 
 ---
+
+## Async Transaction trial
+
+- First we call two operations which are dependent on each other
+  - one insert which should happen first
+  - two updates which should happen next
+  - we will specifically fail the second update to see if it all rolled back or not
+  - does not roll back since not marked with `@Transactional`
+- Second we mark the external service with `@Transactional`
+  - we will repeat the steps and see if it rolled back or not
+  - it does roll back now since its marked with `@Transactional` on the outer service
+- Third is we make the update operations `@Async` and add `@EnableAsync` to the main application class
+  - if both update 1 and update 2 are trying to update the same thing, there is a lock issue
+  - so we make update 1 make its updates to a different record
+  - we can see that even though update 2 fails, update 1 and insert aren't rolled back
+- Now let's attempt to fix this
+  - this cannot be done as transactions are not share-able between threads by the framework itself
+  - it is a separate DB connection with its separate transaction so sharing them is not possible
+
+---
