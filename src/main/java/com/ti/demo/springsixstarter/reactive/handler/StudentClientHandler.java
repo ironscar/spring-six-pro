@@ -52,7 +52,7 @@ public class StudentClientHandler {
             .retrieve()
             .bodyToMono(Void.class)
         ).doOnSuccess(res -> log.info("completed save operation"))
-        .onErrorComplete(e -> {
+        .doOnError(e -> {
             log.error(e.getMessage());
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR, 
@@ -82,7 +82,7 @@ public class StudentClientHandler {
                 .retrieve()
                 .bodyToMono(Void.class)
             ).doOnSuccess(res -> log.info("completed delete operation"))
-            .onErrorComplete(e -> {
+            .doOnError(e -> {
                 log.error(e.getMessage());
                 throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, 
@@ -114,18 +114,12 @@ public class StudentClientHandler {
                 .headers(headers -> headers.setBasicAuth(internalUser, internalPass))
                 .retrieve()
                 .bodyToMono(Void.class)
-                .onErrorComplete(e -> {
-                    log.error(e.getMessage());
-                    throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, 
-                        "update operation failed: " + e.getMessage());
-                })
             ).doOnSuccess(res -> log.info("completed update operation"))
-            .onErrorComplete(e -> {
+            .doOnError(e -> {
                 log.error(e.getMessage());
                 throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, 
-                    "get2 operation failed: " + e.getMessage());
+                    "get2 + update operation failed: " + e.getMessage());
             });
 
         log.info("Log at end of complex operation");

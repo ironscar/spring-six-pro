@@ -39,7 +39,9 @@
 - We add logs at the start and end of each operation, and also in the middle for op2 and op3
   - it creates upto 4 threads and executes the operations in parallel as seen in terminal logs
   - we can make it more obvious by adding `Thread.sleep(xxx)` in the `StudentHandler` methods
-- If one of these fails, the entire request gets blocked instead of failing [FIX]
+- If one of these fails, the entire request gets blocked instead of failing
+  - `onErrorComplete` simple marks the sequence complete but doesn't terminate the mono
+  - `doOnError` on the other hand terminate the mono and returns the actual exception on failure
 
 ---
 
