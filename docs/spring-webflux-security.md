@@ -45,6 +45,24 @@
 
 ---
 
+## Simple reactive operations
+
+- `Flux` and `Mono` are the basic types where flux can emiy multiple values whereas mono can do max one
+- The values don't start flowing until we `susbcribe` to them
+- both implement the `Publisher` interface but the actual reactive operators don't exist on that interface
+
+
+### Operators
+
+- `map` does some transformation for each emitted value
+- `zipWith` combines the  using a provided function and ends when any one of them ends
+  - it waits for the first values of both streams and then emits the first value, then repeats
+- `interval` emits values starting from 0 based on a specified duration
+  - first value is emitted after the first interval duration elapses
+- `take` takes a parameter to specify how many values to take from source stream
+
+---
+
 ## Caveats
 
 - Security setup sometimes doesn't work if you have a jar running inside a docker container

@@ -1,5 +1,6 @@
 package com.ti.demo.springsixstarter.reactive.handler;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ti.demo.domain.reactive.Student;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -34,6 +36,15 @@ public class StudentClientHandler {
     @Autowired
     public void setWebClient(WebClient webClient) {
         this.webClient = webClient;
+        simpleReactiveOperations();
+    }
+
+    private void simpleReactiveOperations() {
+        Flux<Integer> flux = Flux.just(1,2,3,4);
+
+        flux.map(i -> i * 2)
+            .zipWith(Flux.interval(Duration.ofMillis(1000L)), (i,j) -> i + j)
+            .subscribe(i -> log.info("flux value = {}", i));
     }
 
     public Mono<ServerResponse> complexClientOperation(ServerRequest request) {

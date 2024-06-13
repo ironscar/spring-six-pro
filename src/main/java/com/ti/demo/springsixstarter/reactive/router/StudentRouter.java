@@ -38,7 +38,7 @@ public class StudentRouter {
         return nest(
             path("/reactive/app2/student/client").and(accept(MediaType.APPLICATION_JSON)),
             route()
-                .POST(path("").or(path("/")), handler::complexClientOperation)
+                .POST(path(""), handler::complexClientOperation)
                 .build()
         );
     }
