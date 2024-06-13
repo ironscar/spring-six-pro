@@ -69,7 +69,8 @@
 - We can use `client.get().uri(<path>).retrieve().bodyToMono(<type>)` to make the API call
 - For usual classes, `bodyToMono` takes the `<Class>.class`
 - For generic classes, we can define a `ParameterizedTypeReference<GenType<InternalType>> () {}`
-- the retuned value is a mono so we can further process it reactively
+- The retuned value is a mono so we can further process it reactively
+- More covered in `main/spring-webflux-security`
 
 ---
 
@@ -82,18 +83,11 @@
 - `flatMap` can be used to convert a `Mono<X>` to `Mono<Y>` by passing a custom lambda function which returns another `Mono`
   - they can be chained in sequence to keep converting from one `Mono` to another
 - `onErrorMap` can be used on convert Mono exceptions of one type to another
+- More covered in `main/spring-webflux-security`
 
 ## Caveats
 
 - You shouldn't have `web` and `webflux` dependencies in same project as webflux APIs silently fail with 404 in that case
   - we can still use `WebClient` in normal REST APIs though
-
----
-
-- Figure out how to add: [TODO]
-  - parallel calls with webclient
-  - DB calls in R2JDBC
-  - auth config in R2JDBC
-  - use password directly from spring security context (its encoded in bcrypt and we dont have the actual password so it fails)
 
 ---
