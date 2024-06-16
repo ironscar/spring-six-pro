@@ -1,6 +1,7 @@
 package com.ti.demo.springsixstarter.reactive.handler;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ti.demo.domain.reactive.Student;
 
@@ -49,6 +49,7 @@ public class StudentClientHandler {
 
     public Mono<ServerResponse> complexClientOperation(ServerRequest request) {
         log.info("Started complex operation");
+        List<String> errors = new ArrayList<>();
 
         // perform a save operation that goes parallel to both the below
         log.info("Start save operation");
@@ -56,18 +57,17 @@ public class StudentClientHandler {
             .bodyToMono(Student.class)
             .flatMap(student -> webClient
             .post()
-            .uri("/reactive/app2/student")
+            .uri("/reactiv/app2/student")
             .accept(MediaType.APPLICATION_JSON)
             .bodyValue(student)
             .headers(headers -> headers.setBasicAuth(internalUser, internalPass))
             .retrieve()
             .bodyToMono(Void.class)
         ).doOnSuccess(res -> log.info("completed save operation"))
-        .doOnError(e -> {
+        .onErrorResume(e -> {
             log.error(e.getMessage());
-            throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR, 
-                "save operation failed: " + e.getMessage());
+            errors.add("save operation failed: " + e.getMessage());
+            return Mono.empty();
         });
 
         // get id=1 and delete the student
@@ -93,11 +93,10 @@ public class StudentClientHandler {
                 .retrieve()
                 .bodyToMono(Void.class)
             ).doOnSuccess(res -> log.info("completed delete operation"))
-            .doOnError(e -> {
+            .onErrorResume(e -> {
                 log.error(e.getMessage());
-                throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, 
-                    "get1 + delete operation failed: " + e.getMessage());
+                errors.add("get1 + delete operation failed: " + e.getMessage());
+                return Mono.empty();
             });
 
         // get lname=Bell and update last name to Bell2 for both
@@ -126,19 +125,24 @@ public class StudentClientHandler {
                 .retrieve()
                 .bodyToMono(Void.class)
             ).doOnSuccess(res -> log.info("completed update operation"))
-            .doOnError(e -> {
+            .onErrorResume(e -> {
                 log.error(e.getMessage());
-                throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, 
-                    "get2 + update operation failed: " + e.getMessage());
+                errors.add("get2 + update operation failed: " + e.getMessage());
+                return Mono.empty();
             });
 
         log.info("Log at end of complex operation");
 
-        // return successful once all are done
-        return m1.and(m2).and(m3)
-            .doOnSuccess(res -> log.info("completed complex operation"))
-            .then(ServerResponse.ok().build());
+        return Flux.merge(m1, m2, m3)
+            .doFinally(f -> {
+                if (CollectionUtils.isEmpty(errors)) {
+                    log.info("complex operation succeeded");
+                } else {
+                    log.info("complex operation failed: " + errors);
+                }
+            }).then(CollectionUtils.isEmpty(errors) 
+                ? ServerResponse.ok().build() 
+                : ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
     
 }

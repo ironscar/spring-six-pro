@@ -42,6 +42,11 @@
 - If one of these fails, the entire request gets blocked instead of failing
   - `onErrorComplete` simple marks the sequence complete but doesn't terminate the mono
   - `doOnError` on the other hand terminate the mono and returns the actual exception on failure
+  - this however returns the request the moment there is an error and doesn't do any remaining operations
+- To do independent operations regardless of failure
+  - We can use `onErrorResume` and add to an errors list
+  - At the end, instead of a `doOnError` using `and`, which will immediately fail if one of the sources fail
+  - We will use `merge` and `doFinally` to check if errors if empty and return a response accordingly
 
 ---
 
