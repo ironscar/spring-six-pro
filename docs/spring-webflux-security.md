@@ -59,12 +59,43 @@
 
 ### Operators
 
-- `map` does some transformation for each emitted value
-- `zipWith` combines the  using a provided function and ends when any one of them ends
-  - it waits for the first values of both streams and then emits the first value, then repeats
-- `interval` emits values starting from 0 based on a specified duration
-  - first value is emitted after the first interval duration elapses
-- `take` takes a parameter to specify how many values to take from source stream
+- Create operations:
+  - `empty` to create an empty flux/mono
+  - `error(Throwable)` to create a flux/mono that completes with an error
+  - `just` to create flux/mono from separate values
+  - `fromIterable` to create flux/mono from a list
+  - `interval` emits values starting from 0 based on a specified duration
+    - first value is emitted after the first interval duration elapses
+  - `range` creates a stream of values from a specified min to max including both
+
+- Transform operations:
+  - `map` does some transformation for each emitted value but only supports synchronous operations
+  - `flatMap` does some transformation for each emitted value but supports asynchronous operations as well
+    - if there is an internal flux, then flatMap will merge the values
+    - if the internal flux is delayed, then values will be interleaved from both internal and external flux
+
+- Time operations:
+  - `delayElements` to delay each element from the flux/mono to be delayed by a certain amount of time
+
+- Combine operations:
+  - `zipWith` combines the  using a provided function and ends when any one of them ends
+    - it waits for the first values of both streams and then emits the first value, then repeats
+  - `zip` works similar to `zipWith` but is for multiple sources
+  - `concat` taks multiple streams and combines them by subscribing to each stream in order
+    - once the first stream is completed, only then is the second stream started
+  - `concatWith` is only for two sources called as `a.concatWith(b)` and works similar to concat
+  - `combineLatest` takes multiple stream sources and a combinator function
+    - it takes the latest values from both streams and combines them
+    - for any value emitted, it will check if there are most recent values from both streams and combine it
+    - if one of them doesn't have a value yet, it will wait until there is one and then combine it
+    - it will start checking from when the first value from either stream is emitted
+    - combine it implies return the value using the combinator function
+  - `merge` emits a value if any of its source streams emits a value
+  - `mergeWith` is only for two sources called as `a.mergeWith(b)` and works similar to merge
+
+- Filter operations:
+  - `take` takes a parameter to specify how many values to take from source stream
+  - `filter` takes a function returning boolean to filter the values of a stream
 
 ---
 

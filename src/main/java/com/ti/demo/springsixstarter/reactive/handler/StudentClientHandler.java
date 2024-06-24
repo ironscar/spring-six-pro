@@ -2,6 +2,7 @@ package com.ti.demo.springsixstarter.reactive.handler;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,49 @@ public class StudentClientHandler {
     }
 
     private void simpleReactiveOperations() {
+        // create a flux
         Flux<Integer> flux = Flux.just(1,2,3,4);
 
+        // map, zip, interval, take
         flux.map(i -> i * 2)
             .zipWith(Flux.interval(Duration.ofMillis(1000L)), (i,j) -> i + j)
+            .take(2L)
             .subscribe(i -> log.info("flux value = {}", i));
+
+        // transform with map(sync) & flatmap(async delay merge) operations 
+        Flux<Student> flux2 = Flux.fromIterable(Arrays.asList(
+            Student.builder().firstName("john").lastName("gell").build(),
+            Student.builder().firstName("sarah").lastName("bell").build()
+        ));
+        flux2
+            .map(student -> Student
+                .builder()
+                .firstName(student.getFirstName().toUpperCase())
+                .lastName(student.getLastName().toUpperCase())
+                .build())
+            .subscribe(s -> log.info("flux2 map value = {}", s));
+        flux2
+            .flatMap(student -> Flux.just(
+                Student.builder().firstName(student.getFirstName().toUpperCase()).build(),
+                Student.builder().firstName(student.getLastName().toUpperCase()).build()
+            ).delayElements(Duration.ofSeconds(1L)))
+            .subscribe(s -> log.info("flux2 flatMap value = {}", s));
+
+        // concat, combineLatest, merge
+        Flux<Integer> flux3 = Flux
+            .range(1,5)
+            .filter(x -> x % 2 == 0)
+            .delayElements(Duration.ofMillis(500L));
+        Flux<Integer> flux4 = Flux
+            .range(1,5)
+            .filter(x -> x % 2 != 0)
+            .delayElements(Duration.ofMillis(300L));
+        Flux.concat(flux3, flux4)
+            .subscribe(s -> log.info("flux3&4 concat value = {}", s));
+        Flux.combineLatest(flux4, flux3, (a, b) -> a.toString() + b.toString())
+            .subscribe(s -> log.info("flux3&4 combineLatest value = {}", s));
+        Flux.merge(flux3, flux4)
+            .subscribe(s -> log.info("flux3&4 merge value = {}", s));
     }
 
     public Mono<ServerResponse> complexClientOperation(ServerRequest request) {
