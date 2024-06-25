@@ -55,11 +55,19 @@
 - `Flux` and `Mono` are the basic types where flux can emiy multiple values whereas mono can do max one
 - The values don't start flowing until we `susbcribe` to them
 - both implement the `Publisher` interface but the actual reactive operators don't exist on that interface
-
+- generally, when we subscribe to a flux/mono
+  - it checks if its part of a previous flux/mono due to operators in a pipeline
+  - if it is, it signals its source
+  - this happens recursively until the actual source receives the signal and starts the data flow
+- this is the default behavior referred to as `Cold Flux`
+  - each subscribe will run the entire data in the flux through the pipeline
+- the other kind is `Hot Flux` which doesn't need a subscriber to start data flow
+  - therefore, it can miss values depending on when it is subscribed to
+  - as long as there is one subscription to the cold flux its made from, it can push data
 
 ### Operators
 
-- Create operations:
+- Create operators:
   - `empty` to create an empty flux/mono
   - `error(Throwable)` to create a flux/mono that completes with an error
   - `just` to create flux/mono from separate values
@@ -68,16 +76,16 @@
     - first value is emitted after the first interval duration elapses
   - `range` creates a stream of values from a specified min to max including both
 
-- Transform operations:
+- Transform operators:
   - `map` does some transformation for each emitted value but only supports synchronous operations
   - `flatMap` does some transformation for each emitted value but supports asynchronous operations as well
     - if there is an internal flux, then flatMap will merge the values
     - if the internal flux is delayed, then values will be interleaved from both internal and external flux
 
-- Time operations:
+- Time operators:
   - `delayElements` to delay each element from the flux/mono to be delayed by a certain amount of time
 
-- Combine operations:
+- Combine operators:
   - `zipWith` combines the  using a provided function and ends when any one of them ends
     - it waits for the first values of both streams and then emits the first value, then repeats
   - `zip` works similar to `zipWith` but is for multiple sources
@@ -93,9 +101,18 @@
   - `merge` emits a value if any of its source streams emits a value
   - `mergeWith` is only for two sources called as `a.mergeWith(b)` and works similar to merge
 
-- Filter operations:
+- Filter operators:
   - `take` takes a parameter to specify how many values to take from source stream
   - `filter` takes a function returning boolean to filter the values of a stream
+
+- Blocking operators:
+  - `blockFirst` blocks until the first value is emitted or flux is completed
+    - it also optionally takes a timeout to block until that time and else throw exception
+  - `blockLast` blocks until the flux completes and returns the last value, also takes timeout parameter
+  - `toIterable` returns an iterable for each emitted value and blocks on the `iter.next()` call
+
+- Hot flux operators:
+  - `share` returns a new hot flux from an existing cold flux
 
 ---
 
@@ -112,7 +129,6 @@
 ---
 
 - Figure out how to add: [TODO]
-  - parallel calls with webclient
   - DB calls in R2JDBC
   - auth config in R2JDBC
 

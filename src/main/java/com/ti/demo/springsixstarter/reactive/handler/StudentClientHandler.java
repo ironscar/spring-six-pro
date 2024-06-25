@@ -3,6 +3,7 @@ package com.ti.demo.springsixstarter.reactive.handler;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,15 @@ public class StudentClientHandler {
     private WebClient webClient;
 
     @Autowired
-    public void setWebClient(WebClient webClient) {
+    public void setWebClient(WebClient webClient) throws InterruptedException {
         this.webClient = webClient;
         simpleReactiveOperations();
+        complexReactiveOperations();
     }
 
     private void simpleReactiveOperations() {
+        log.info("Started simple reactive operations");
+
         // create a flux
         Flux<Integer> flux = Flux.just(1,2,3,4);
 
@@ -84,6 +88,33 @@ public class StudentClientHandler {
             .subscribe(s -> log.info("flux3&4 combineLatest value = {}", s));
         Flux.merge(flux3, flux4)
             .subscribe(s -> log.info("flux3&4 merge value = {}", s));
+
+        // reactive to blocking
+        Integer b1 = flux4.blockFirst();
+        log.info("blockfirst log: {}", b1);
+        Integer b2 = flux4.blockLast();
+        log.info("blockLast log: {}", b2);
+        Iterator<Integer> it = flux3.toIterable(1).iterator();
+        while(it.hasNext()) {
+            log.info("flux to iterable: {}", it.next());
+        }
+
+        log.info("Ended simple reactive operations");
+    }
+
+    private void complexReactiveOperations() throws InterruptedException {
+        log.info("Started complex reactive operations");
+
+        // hot fluxes
+        Flux<Long> coldTicks = Flux.interval(Duration.ofSeconds(1)).take(5);
+        Flux<Long> hotTicks = coldTicks.share();
+        hotTicks.subscribe(tick -> log.info("clock1 " + tick + "s"));
+        Thread.sleep(2000);
+        hotTicks.subscribe(tick -> log.info("\tclock2 " + tick + "s"));
+
+        // schedulers
+
+        // backpressure
     }
 
     public Mono<ServerResponse> complexClientOperation(ServerRequest request) {
