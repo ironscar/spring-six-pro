@@ -65,7 +65,43 @@
   - therefore, it can miss values depending on when it is subscribed to
   - as long as there is one subscription to the cold flux its made from, it can push data
 
-### Operators
+---
+
+## Schedulers
+
+- Schedulers allow controlling the threading model of the workload
+- Some schedulers are already built into reactor
+  - `immediate` does things on the same thread
+  - `single` is for one-off tasks and creates one extra thread
+  - `parallel` is for N parallel short-lived tasks in parallel threads (N = number of vCPUs)
+  - `elastic` is for any number of tasks that keeps spawning threads on demand with no limit
+  - `boundedElastic` is similar to `elastic` but puts a limit of threads after which it enqueues tasks
+- Most operators work on the same thread they were signalled from except time-based ones like `delay`
+- `subscibeOn` and `publishOn` are two scheduler operators discussed below in the `Operators` section
+  - Generally `subscribeOn` is used after blocking operations whereas `publishOn` is used before blocking operations
+  - If they are used together
+    - it first follows the `subscribeOn` scheduler from bottom to top in terms of subscriptions
+    - then it goes top to bottom on the `subscribeOn` scheduler till it reaches a `publishOn`
+    - then everything happens on the `publishOn` scheduler until there are operators like `delay` which use a different scheduler
+- If using `Future` for blocking operation, don't use it with `subscribeOn` as it doesn't guarantee it running on specific thread
+  - `publishOn` guarantees it and therefore is recommended
+  - ideally, don't use futures here as you can directly call the method that makes an API call instead of returning a `Future`
+- To create a custom scheduler, you can use `newBoundedElastic`, `newParallel` and `newSingle` static methods of `Schedulers` class
+
+---
+
+## Backpressure
+
+- Sometimes values in a stream are produced too quickly for a consumer to process
+- `Backpressure` refers to the regulation of transmission of stream elements
+- We can do one of the following things:
+  - request only as many elements as client can process
+  - limit the number of elements sent from publisher
+  - cancel the stream from client when it cannot process anymore
+
+---
+
+## Operators
 
 - Create operators:
   - `empty` to create an empty flux/mono
@@ -113,6 +149,14 @@
 
 - Hot flux operators:
   - `share` returns a new hot flux from an existing cold flux
+
+- Scheduler operators:
+  - `publishOn` takes a scheduler argument and the corresponding stream executes on a new thread of that scheduler
+    - works when the blocking operation can be preceded by this operator
+    - it changes where the `onNext`, `onError` and `onComplete` methods are called
+  - `subscribeOn` is similar but more generally is used when the blocking operation precedes this operator
+    - it changes where the `subscribe` method gets called instead
+    - it can still be used after the blocking operation but the internal workings are different from `publishOn`
 
 ---
 
