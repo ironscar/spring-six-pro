@@ -98,6 +98,13 @@
   - request only as many elements as client can process
   - limit the number of elements sent from publisher
   - cancel the stream from client when it cannot process anymore
+- In each of these cases, we can check with the following setup:
+  - start with a range of 1 to 20 and add a delay of 200ms
+  - then add a log to each of these elements so that we know when that part of the chain emits
+  - then add a publishOn so that the rest of the chain happens on a different thread
+  - finally, sleep the thread for 1000ms and then log the value again in the subscription
+  - this allows us to see exactly how many are published from publisher at a time and the different pace of processing by client
+- cancel is very much like request but instead of a request again cycle, we just call `cancel()`
 
 ---
 

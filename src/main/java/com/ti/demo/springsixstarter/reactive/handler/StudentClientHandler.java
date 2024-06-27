@@ -246,10 +246,12 @@ public class StudentClientHandler {
             .subscribeOn(scheduler2)
             .subscribe(v -> log.info("[SUBSCRIBE] {} executed second list with value {}", Thread.currentThread().getName(), v));
 
-        // backpressure request 10 at a time
+        // backpressure request from subscriber
+        boolean shouldCancel = true;
         Flux.range(1,20)
             .delayElements(Duration.ofMillis(200))
-            .doOnEach(v -> log.info("Source stream value = {}", v))
+            .doOnEach(v -> log.info("Source stream value 1 = {}", v))
+            .publishOn(Schedulers.boundedElastic())
             .subscribe(new BaseSubscriber<Integer>() {
                 @Override
                 protected void hookOnSubscribe(Subscription subscription) {
@@ -262,17 +264,33 @@ public class StudentClientHandler {
                     // simulate processing
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    log.info("Backpressure log value = {}", value);
+                    } catch (InterruptedException e) {}
+                    log.info("Backpressure request log value = {}", value);
 
                     // get next 10 values when tenth value
                     if (value % 5 == 0) {
-                        request(5);
+                        if (shouldCancel) {
+                            cancel();
+                        } else {
+                            request(5);
+                        }
                     }
                 }
             });
+
+        // backpressure limit publisher
+        Flux.range(1,20)
+            .delayElements(Duration.ofMillis(200))
+            .doOnEach(v -> log.info("Source stream value 2 = {}", v))
+            .limitRate(5)
+            .publishOn(Schedulers.boundedElastic())
+            .subscribe(v -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {}
+                log.info("Backpressure limit log value = {}", v);
+            });
+
     }
 
 }
