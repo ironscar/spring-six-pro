@@ -42,7 +42,7 @@ public class StudentClientHandler {
     @Autowired
     public void setWebClient(WebClient webClient) throws InterruptedException {
         this.webClient = webClient;
-        // simpleReactiveOperations();
+        simpleReactiveOperations();
         complexReactiveOperations();
     }
 
@@ -280,7 +280,7 @@ public class StudentClientHandler {
 
         // backpressure limit publisher
         Flux.range(1,20)
-            .delayElements(Duration.ofMillis(200))
+            .delayElements(Duration.ofMillis(400))
             .doOnEach(v -> log.info("Source stream value 2 = {}", v))
             .limitRate(5)
             .publishOn(Schedulers.boundedElastic())

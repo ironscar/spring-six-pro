@@ -104,6 +104,7 @@
   - then add a publishOn so that the rest of the chain happens on a different thread
   - finally, sleep the thread for 1000ms and then log the value again in the subscription
   - this allows us to see exactly how many are published from publisher at a time and the different pace of processing by client
+- the request and limit pieces are not very obvious from these examples though
 - cancel is very much like request but instead of a request again cycle, we just call `cancel()`
 
 ---
