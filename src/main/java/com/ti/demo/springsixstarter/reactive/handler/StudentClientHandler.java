@@ -31,6 +31,9 @@ import reactor.core.scheduler.Schedulers;
 @Component
 public class StudentClientHandler {
 
+    @Value("${disable-reactive-operations}")
+    private boolean disableReactiveOperations;
+
     @Value("${app.internal.user}")
     private String internalUser;
 
@@ -42,8 +45,10 @@ public class StudentClientHandler {
     @Autowired
     public void setWebClient(WebClient webClient) throws InterruptedException {
         this.webClient = webClient;
-        simpleReactiveOperations();
-        complexReactiveOperations();
+        if (!disableReactiveOperations) {
+            simpleReactiveOperations();
+            complexReactiveOperations();
+        }
     }
 
     public Mono<ServerResponse> complexClientOperation(ServerRequest request) {
