@@ -1,7 +1,9 @@
 package com.ti.demo.springsixstarter.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -15,10 +17,13 @@ import reactor.core.publisher.Mono;
 @Service
 public class StudentService {
 
+    private DatabaseClient dbClient;
+
     private StudentDao studentDao;
 
-    StudentService(StudentDao sd) {
+    StudentService(StudentDao sd, DatabaseClient dc) {
         studentDao = sd;
+        dbClient = dc;
     }
 
     public Mono<List<Student>> getStudents(String fname, String lname) {
@@ -30,15 +35,14 @@ public class StudentService {
         if (id < 0) {
             return Mono.error(new IllegalArgumentException("id cannot be negative"));
         }
-        // check how to do no matching exceptions
-        return studentDao.findById(id);
+        return studentDao.findById(id).switchIfEmpty(Mono.error(new NoSuchElementException("student not found")));
     }
 
     public Mono<Void> saveStudent(Student newStudent) {
         if (!(StringUtils.hasText(newStudent.getFirstName()) && StringUtils.hasText(newStudent.getLastName()))) {
             return Mono.error(new IllegalArgumentException("Names cannot be null"));
         }
-        studentDao.save(newStudent);
+        studentDao.save(newStudent).subscribe();
         return Mono.empty();
     }
 
@@ -46,7 +50,6 @@ public class StudentService {
         if (CollectionUtils.isEmpty(ids)) {
             return Mono.error(new IllegalArgumentException("ids must not be empty"));
         }
-        // check how to do no matching exceptions
         return studentDao.deleteAllById(ids);
     }
 
@@ -54,39 +57,48 @@ public class StudentService {
         if (id == null || updatedDetails.getFirstName() == null || updatedDetails.getLastName() == null) {
             return Mono.error(new IllegalArgumentException("Names or Id cannot be null"));
         }
-        // Student student = students
-        //     .stream()
-        //     .filter(stud -> id.equals(stud.getId()))
-        //     .findFirst()
-        //     .orElse(null);
-        // if (student == null) {
-        //     return Mono.error(new NoSuchElementException("id does not exist"));
-        // }
-        // student.setEmail(updatedDetails.getEmail());
-        // student.setFirstName(updatedDetails.getFirstName());
-        // student.setLastName(updatedDetails.getLastName());
-        return Mono.empty();
+        return dbClient.sql(
+            """
+                UPDATE student SET 
+                    first_name=:fname, 
+                    last_name=:lname, 
+                    email=:email 
+                WHERE id = :id
+            """)
+            .bind("fname", updatedDetails.getFirstName())
+            .bind("lname", updatedDetails.getLastName())
+            .bind("email", updatedDetails.getEmail())
+            .bind("id", id.toString())
+            .fetch()
+            .rowsUpdated()
+            .flatMap(count -> {
+                if (count == 0L) {
+                    return Mono.error(new NoSuchElementException("id doesn't exist"));
+                }
+                return Mono.empty();
+            });
     }
 
     public Mono<Void> updateStudents(List<String> ids, String lastName) {
         if (CollectionUtils.isEmpty(ids) || lastName == null) {
             return Mono.error(new IllegalArgumentException("ids or name must not be null"));
         }
-        // int count = 0;
-        // for (int i = 0 ; i < students.size() ; i++) {
-        //     Student student = students.get(i);
-        //     if (ids.contains(student.getId().toString())) {
-        //         student.setLastName(lastName);
-        //         count++;
-        //     }
-        //     if (count == ids.size()) {
-        //         break;
-        //     }
-        // }
-        // if (count == 0) {
-        //     return Mono.error(new NoSuchElementException("ids don't exist"));
-        // }
-        return Mono.empty();
+        return dbClient.sql(
+            """
+                UPDATE student SET 
+                    last_name=:lname 
+                WHERE id in (:ids)
+            """)
+            .bind("lname", lastName)
+            .bind("ids", ids)
+            .fetch()
+            .rowsUpdated()
+            .flatMap(count -> {
+                if (count == 0L) {
+                    return Mono.error(new NoSuchElementException("id doesn't exist"));
+                }
+                return Mono.empty();
+            });
     }
 
 }
