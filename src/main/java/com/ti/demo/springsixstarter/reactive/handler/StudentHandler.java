@@ -36,7 +36,8 @@ public class StudentHandler {
             Thread.sleep(1000);
             return studentService.getStudents(
                 request.queryParam("fname").orElse(null),
-                request.queryParam("lname").orElse(null)
+                request.queryParam("lname").orElse(null),
+                request.queryParam("custom").isPresent()
             ).flatMap(students -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -119,8 +120,9 @@ public class StudentHandler {
             Thread.sleep(2000);
             String ids = request.queryParam("ids").orElse(null);
             String lastName = request.queryParam("lname").orElse(null);
+            boolean useCustom = request.queryParam("custom").isPresent();
             List<String> idList = ids == null ? Collections.emptyList() : Arrays.asList(ids.split(","));
-            return studentService.updateStudents(idList, lastName)
+            return studentService.updateStudents(idList, lastName, useCustom)
                 .then(ServerResponse.ok().build())
                 .onErrorResume(this::buildErrorResponse);
         } catch (Exception e) {

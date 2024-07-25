@@ -26,8 +26,10 @@ public class StudentService {
         dbClient = dc;
     }
 
-    public Mono<List<Student>> getStudents(String fname, String lname) {
-        Flux<Student> studFlux = studentDao.findStudentByFirstNameOrLastName(fname, lname);
+    public Mono<List<Student>> getStudents(String fname, String lname, boolean useCustom) {
+        Flux<Student> studFlux = useCustom 
+            ? studentDao.getStudentsByCustomQuery(fname, lname)
+            : studentDao.findStudentByFirstNameOrLastName(fname, lname);
         return studFlux.collectList();
     }
 
@@ -79,26 +81,30 @@ public class StudentService {
             });
     }
 
-    public Mono<Void> updateStudents(List<String> ids, String lastName) {
+    public Mono<Void> updateStudents(List<String> ids, String lastName, boolean useCustom) {
         if (CollectionUtils.isEmpty(ids) || lastName == null) {
             return Mono.error(new IllegalArgumentException("ids or name must not be null"));
         }
-        return dbClient.sql(
-            """
-                UPDATE student SET 
-                    last_name=:lname 
-                WHERE id in (:ids)
-            """)
-            .bind("lname", lastName)
-            .bind("ids", ids)
-            .fetch()
-            .rowsUpdated()
-            .flatMap(count -> {
-                if (count == 0L) {
-                    return Mono.error(new NoSuchElementException("id doesn't exist"));
-                }
-                return Mono.empty();
-            });
+
+        Mono<Long> m = useCustom
+            ? studentDao.updateStudentsByCustomLastNameQuery(ids, lastName)
+            : dbClient.sql(
+                """
+                    UPDATE student SET 
+                        last_name=:lname 
+                    WHERE id in (:ids)
+                """)
+                .bind("lname", lastName)
+                .bind("ids", ids)
+                .fetch()
+                .rowsUpdated();
+        
+        return m.flatMap(count -> {
+            if (count == 0L) {
+                return Mono.error(new NoSuchElementException("id doesn't exist"));
+            }
+            return Mono.empty();
+        });
     }
 
 }
