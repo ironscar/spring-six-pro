@@ -41,8 +41,9 @@
   - but the entire query needs to be specified as string which makes it hard to maintain
   - we can use multi-line strings with Java 17 as `""" <multiline string content here> """`
 
-- complex joins, conditions and bulk inserts in R2DBC [CHECK]
-- auth config in R2DBC
+- Todo [CHECK]
+  - join select on compound object and multi-insert
+  - auth config in R2DBC
 
 ---
 

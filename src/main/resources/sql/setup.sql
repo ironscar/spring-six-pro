@@ -18,13 +18,21 @@ USE `student_tracker`;
 -- ------------------------- CREATE TABLES -------------------------------
 
 -- create first table: student
-CREATE TABLE `student` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `first_name`varchar(45) DEFAULT NULL,
-  `last_name` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+CREATE TABLE student (
+  id int NOT NULL AUTO_INCREMENT,
+  first_name varchar(45) DEFAULT NULL,
+  last_name varchar(45) DEFAULT NULL,
+  email varchar(45) DEFAULT NULL,
+  PRIMARY KEY (id)
+) AUTO_INCREMENT=1;
+
+-- create second table: greeting
+CREATE TABLE greeting (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    message varchar(45) NOT NULL,
+    student_id int NOT NULL,
+    FOREIGN KEY(student_id) REFERENCES student(id)
+) AUTO_INCREMENT=1;
 
 -- create users table for spring security
 CREATE TABLE users (
@@ -58,6 +66,9 @@ CREATE TABLE custom_authorities (
 -- insert into student table
 insert into student (first_name, last_name, email) values ('Iron', 'Scar', 'ironscar@gmail.com');
 
+-- insert into greeting table
+insert into greeting (message, student_id) values ('Hello World!', 1);
+
 -- insert into users & authorities security table
 insert into users (username, password, enabled) values ('john', '{bcrypt}$2a$12$hrEaU.DlOHFFz./tvhSKqutvEYz1E0aJRfQ71DSQMpW2unEDoegZi', 1);
 insert into users (username, password, enabled) values ('amy', '{bcrypt}$2a$12$/I3plg0ELFDOAqCoo.NFX.ZTtyGUTQS.tBZk0IywYu6WzBQCcYt6C', 1);
@@ -80,6 +91,10 @@ insert into custom_authorities (userid, role) values ('prince', 'ADMIN');
 
 -- ------------------------ CLEANUP ------------------------
 
+-- drop regular tables
+drop table student;
+drop table greeting;
+
 -- to delete records if required from security tables
 delete from authorities where username in ('john', 'amy', 'prince');
 delete from users where username in ('john', 'amy', 'prince');
@@ -93,8 +108,29 @@ drop table custom_users;
 -- select from student table
 select* from student;
 
+-- select from greeting table
+select* from greeting;
+
 -- select from security tables
 select u.*, a.authority from users u join authorities a on u.username = a.username;
 
 -- select from custom security tables
 select u.userid, u.pwd, CASE WHEN u.enabled = 'Y' THEN 1 ELSE 0 END enabled, concat('ROLE_', a.role) role from custom_users u join custom_authorities a on u.userid = a.userid;
+
+-- ------------------------- JOIN QUERY DATA -------------------------------
+
+-- join select
+select 
+	s.*, g.message
+from student s
+join greeting g
+on s.id = g.student_id;
+
+-- multi-greeting insert
+insert into greeting (
+	message,
+    student_id
+) 
+select "Hello Again 1", 1 student_id from dual
+union
+select "Hello Again 2", 1 student_id from dual;
