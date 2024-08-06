@@ -57,6 +57,9 @@
     - we should avoid using `@Column` in this case as different mappings may have different column aliases
     - we depend completely on the mapping methods for this
 - For this, refer to `ComplexStudentDaoImpl`
+  - this doesn't extend from `R2dbcRepository` and instead from a new repository entirely
+  - we define mappings and query implementations in the same file like we do in MyBatis in the synchronous world
+  - we don't need the annotations on the domain class anymore since we do our own mapping
 
 - Todo [CHECK]
   - multi-insert on compound object

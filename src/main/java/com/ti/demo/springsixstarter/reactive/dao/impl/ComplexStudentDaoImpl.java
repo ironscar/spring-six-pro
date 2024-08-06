@@ -1,9 +1,14 @@
 package com.ti.demo.springsixstarter.reactive.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 
 import com.ti.demo.domain.reactive.ComplexStudent;
+import com.ti.demo.domain.reactive.Greeting;
 import com.ti.demo.springsixstarter.reactive.dao.ComplexStudentDao;
 
 import reactor.core.publisher.Flux;
@@ -14,7 +19,11 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
 
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
+    private static final String EMAIL = "email";
     private static final String ST_ID = "st_id";
+    private static final String G_ID = "g_id";
+    private static final String G_MSG = "g_msg";
+
     private static final String STD_GRT_JOIN_QUERY = """
         SELECT 
             s.id st_id,
@@ -34,6 +43,26 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
         dbClient = dc;
     }
 
+    public static Mono<ComplexStudent> getComplexStudentMapping1(List<Map<String, Object>> rows) {
+        return Mono.just(ComplexStudent.builder()
+            .id(Integer.parseInt(rows.get(0).get(ST_ID).toString()))
+            .firstName((String) rows.get(0).get(FIRST_NAME))
+            .lastName((String) rows.get(0).get(LAST_NAME))
+            .email((String) rows.get(0).get(EMAIL))
+            .greetings(rows.stream().map(row -> getGreetingMapping1(row)).filter(Objects::nonNull).toList())
+            .build());
+    }
+
+    public static Greeting getGreetingMapping1(Map<String, Object> row) {
+        if (row.get(G_ID) != null) {
+            return Greeting.builder()
+                .id(Integer.parseInt(row.get(G_ID).toString()))
+                .message((String) row.get(G_MSG))
+                .build();
+        }
+        return null;
+    }
+
     @Override
     public Flux<ComplexStudent> findAll(String firstName, String lastName) {
         return dbClient.sql(String.format(
@@ -43,7 +72,7 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
             .fetch()
             .all()
             .bufferUntilChanged(result -> result.get(ST_ID))
-            .flatMap(ComplexStudent::getComplexStudentMapping1);
+            .flatMap(row -> getComplexStudentMapping1(row));
     }
 
     @Override
@@ -53,7 +82,7 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
             .fetch()
             .all()
             .bufferUntilChanged(result -> result.get(ST_ID))
-            .flatMap(ComplexStudent::getComplexStudentMapping1)
+            .flatMap(row -> getComplexStudentMapping1(row))
             .singleOrEmpty();
     }
 
