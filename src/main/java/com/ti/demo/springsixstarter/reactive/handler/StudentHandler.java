@@ -34,10 +34,17 @@ public class StudentHandler {
         try {
             // added for web client async check
             Thread.sleep(1000);
-            return studentService.getStudents(
-                request.queryParam("fname").orElse(null),
-                request.queryParam("lname").orElse(null),
-                request.queryParam("custom").isPresent()
+
+            // get req params
+            String fname = request.queryParam("fname").orElse(null);
+            String lname = request.queryParam("lname").orElse(null);
+            boolean isCustom = request.queryParam("custom").isPresent();
+            boolean isComplex = request.queryParam("complex").isPresent();
+
+            // complex implies join query and otherwise simple
+            return (isComplex
+                ? studentService.getComplexStudents(fname, lname)
+                : studentService.getStudents(fname, lname, isCustom)
             ).flatMap(students -> ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +59,13 @@ public class StudentHandler {
         try {
             // added for web client async check
             Thread.sleep(500);
-            return studentService.getStudentById(Integer.parseInt(request.pathVariable("id")))
+
+            // get req params
+            boolean isComplex = request.queryParam("complex").isPresent();
+            int id = Integer.parseInt(request.pathVariable("id"));
+
+            // complex implies join query and otherwise simple
+            return (isComplex ? studentService.getComplexStudentById(id) : studentService.getStudentById(id))
                 .flatMap(student -> ServerResponse
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)

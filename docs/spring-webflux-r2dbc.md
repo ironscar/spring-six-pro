@@ -16,11 +16,11 @@
   - for this, we need to create a bean of type `ConnectionFactoryOptionsBuilderCustomizer`
   - we update the zone to UTC as done in `AppConfig`
 - POJO classes are defined similar to hibernate with annotations for table and columns
-- Repository classes are defined by extending from `ReactiveCrudRepository<T, Integer>`
+- Repository classes are defined by extending from `R2dbcRepository<T, Integer>`
 
 ### Quering alternatives
 
-- `ReactiveCrudRepository` provides the following functionalities:
+- `R2dbcRepository` provides the following functionalities:
   - this provides a few methods like `find`, `save` etc
     - `save` doesn't automatically persist and needs to be subscribed to with `.subscribe()`
     - delete methods don't require subscribing
@@ -41,8 +41,25 @@
   - but the entire query needs to be specified as string which makes it hard to maintain
   - we can use multi-line strings with Java 17 as `""" <multiline string content here> """`
 
+### Joins
+
+- R2DBC is not an ORM and so doesn't support joins out of the box
+- When we add a new field which has no mapping in existing DAO implementations using out-of-the-box
+  - then those DAO methods will start failing as it doesn't know how to map that field
+  - so if we need relationships, we cannot use the out-of-the-box implementations available
+- So we would create our own interface for the DAO and then a class to implement those specifically
+  - in addition, we will also define the mappings of the relationships for each entity ourselves
+  - we will use the `DatabaseClient` based querying as that gives us the most flexibility
+  - we use `.fetch().all()` to get all results
+  - we use `bufferUntilChanged` to group all rows of that specific type into one flux emit
+    - this is also used for `findById` to convert it into the right format even if there will be just one
+  - then we map this using the mapper methods we define like `getComplexStudentMapping1`
+    - we should avoid using `@Column` in this case as different mappings may have different column aliases
+    - we depend completely on the mapping methods for this
+- For this, refer to `ComplexStudentDaoImpl`
+
 - Todo [CHECK]
-  - join select on compound object and multi-insert
+  - multi-insert on compound object
   - auth config in R2DBC
 
 ---

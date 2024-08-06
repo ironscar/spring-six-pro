@@ -121,7 +121,12 @@ select u.userid, u.pwd, CASE WHEN u.enabled = 'Y' THEN 1 ELSE 0 END enabled, con
 
 -- join select
 select 
-	s.*, g.message
+	s.id st_id,
+    s.first_name first_name,
+    s.last_name last_name,
+    s.email email,
+    g.id g_id,
+    g.message g_msg
 from student s
 join greeting g
 on s.id = g.student_id;

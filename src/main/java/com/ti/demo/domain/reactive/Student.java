@@ -1,7 +1,5 @@
 package com.ti.demo.domain.reactive;
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -30,7 +28,5 @@ public class Student {
 
     @Column("email")
     private String email;
-
-    private List<Greeting> greetings;
 
 }

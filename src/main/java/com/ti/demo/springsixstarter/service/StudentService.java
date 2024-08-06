@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.ti.demo.domain.reactive.ComplexStudent;
 import com.ti.demo.domain.reactive.Student;
+import com.ti.demo.springsixstarter.reactive.dao.ComplexStudentDao;
 import com.ti.demo.springsixstarter.reactive.dao.StudentDao;
 
 import reactor.core.publisher.Flux;
@@ -21,8 +23,11 @@ public class StudentService {
 
     private StudentDao studentDao;
 
-    StudentService(StudentDao sd, DatabaseClient dc) {
+    private ComplexStudentDao complexStudentDao;
+
+    StudentService(StudentDao sd, ComplexStudentDao csd, DatabaseClient dc) {
         studentDao = sd;
+        complexStudentDao = csd;
         dbClient = dc;
     }
 
@@ -105,6 +110,17 @@ public class StudentService {
             }
             return Mono.empty();
         });
+    }
+
+    public Mono<List<ComplexStudent>> getComplexStudents(String firstName, String lastName) {
+        return complexStudentDao.findAll(firstName, lastName).collectList();
+    }
+
+    public Mono<ComplexStudent> getComplexStudentById(Integer id) {
+        if (id < 0) {
+            return Mono.error(new IllegalArgumentException("id cannot be negative"));
+        }
+        return complexStudentDao.findById(id);
     }
 
 }

@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
 
 import com.ti.demo.domain.reactive.Student;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface StudentDao extends ReactiveCrudRepository<Student, Integer> {
+public interface StudentDao extends R2dbcRepository<Student, Integer> {
 
     Flux<Student> findStudentByFirstNameOrLastName(String fname, String lname);
 
