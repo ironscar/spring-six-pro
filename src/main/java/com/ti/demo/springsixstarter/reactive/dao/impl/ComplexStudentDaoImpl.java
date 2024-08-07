@@ -89,20 +89,21 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
     @Override
     public Mono<Long> saveGreetings(ComplexStudent student) {
         // build query
-        String selectStub = null;
-        for (int i = 0 ; i < student.getGreetings().size() ; i++) {
-            selectStub = String.format(
-                "%s SELECT '%s' message, %d student_id FROM DUAL", 
-                selectStub != null ? selectStub + " UNION " : "", 
-                student.getGreetings().get(i).getMessage(), 
-                student.getId());
-        }
         String insertStub = String.format("""
             INSERT INTO greeting (message, student_id) 
             SELECT * FROM (%s) new_greets
             WHERE student_id in (
                 SELECT id FROM student WHERE id = %d
-            )""", selectStub, student.getId());
+            )""", 
+            student.getGreetings()
+                .stream()
+                .map(greeting -> String.format(
+                    "SELECT '%s' message, %d student_id FROM DUAL", 
+                    greeting.getMessage(), 
+                    student.getId())
+                ).reduce(null, (a, b) -> a == null 
+                    ? b : String.format("%s UNION %s", a, b)), 
+            student.getId());
 
         // run query
         return dbClient.sql(insertStub).fetch().rowsUpdated();

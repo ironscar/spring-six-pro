@@ -66,7 +66,6 @@
 - We can use `DatabaseClient` to run the query and we can get `rowsUpdated()`
 - But all of the query-building has to be done by us manually
 - When we call the dao method for insert, we must add a `.subscribe()` else it doesn't work (as with `R2dbcRepository`)
-- Attempt to create methods for programmatic query building with `if-else`, `foreach` and entity relationships [TODO]
 
 ### Auth config
 
