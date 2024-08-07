@@ -61,9 +61,16 @@
   - we define mappings and query implementations in the same file like we do in MyBatis in the synchronous world
   - we don't need the annotations on the domain class anymore since we do our own mapping
 
-- Todo [CHECK]
-  - multi-insert on compound object
-  - auth config in R2DBC
+### Multi-inserts
+
+- We can use `DatabaseClient` to run the query and we can get `rowsUpdated()`
+- But all of the query-building has to be done by us manually
+- When we call the dao method for insert, we must add a `.subscribe()` else it doesn't work (as with `R2dbcRepository`)
+- Attempt to create methods for programmatic query building with `if-else`, `foreach` and entity relationships [TODO]
+
+### Auth config
+
+- auth config in R2DBC [TODO]
 
 ---
 

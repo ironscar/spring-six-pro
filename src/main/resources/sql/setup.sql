@@ -128,7 +128,7 @@ select
     g.id g_id,
     g.message g_msg
 from student s
-join greeting g
+left join greeting g
 on s.id = g.student_id;
 
 -- multi-greeting insert
@@ -136,6 +136,9 @@ insert into greeting (
 	message,
     student_id
 ) 
-select "Hello Again 1", 1 student_id from dual
-union
-select "Hello Again 2", 1 student_id from dual;
+select* from (
+	select "Hello Again 1" message, 1 student_id from dual
+	union
+	select "Hello Again 2" message, 1 student_id from dual
+) new_greets
+where student_id in (select id from student where id = 12);

@@ -123,4 +123,12 @@ public class StudentService {
         return complexStudentDao.findById(id);
     }
 
+    public Mono<Void> saveGreetingsForComplexStudent(ComplexStudent student) {
+        if (student == null || CollectionUtils.isEmpty(student.getGreetings())) {
+            return Mono.error(new IllegalArgumentException("no greetings to insert"));
+        }
+        complexStudentDao.saveGreetings(student).log().subscribe();
+        return Mono.empty();
+    }
+
 }

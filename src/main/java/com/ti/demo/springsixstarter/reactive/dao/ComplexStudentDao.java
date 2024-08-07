@@ -11,4 +11,6 @@ public interface ComplexStudentDao {
 
     Mono<ComplexStudent> findById(Integer id);
 
+    Mono<Long> saveGreetings(ComplexStudent student);
+
 }

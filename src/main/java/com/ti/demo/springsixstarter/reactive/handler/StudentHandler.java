@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.ti.demo.domain.exception.StudentErrorResponse;
 import com.ti.demo.domain.exception.StudentException;
+import com.ti.demo.domain.reactive.ComplexStudent;
 import com.ti.demo.domain.reactive.Student;
 import com.ti.demo.springsixstarter.service.StudentService;
 
@@ -80,10 +81,17 @@ public class StudentHandler {
         try {
             // added for web client async check
             Thread.sleep(2000);
-            return request.bodyToMono(Student.class)
-                .flatMap(student -> studentService.saveStudent(student))
-                .then(ServerResponse.ok().build())
-                .onErrorResume(this::buildErrorResponse);
+
+            // get req params
+            boolean isComplex = request.queryParam("complex").isPresent();
+
+            return (isComplex    
+                ? request.bodyToMono(ComplexStudent.class)
+                    .flatMap(student -> studentService.saveGreetingsForComplexStudent(student))
+                : request.bodyToMono(Student.class)
+                    .flatMap(student -> studentService.saveStudent(student))
+            ).then(ServerResponse.ok().build())
+            .onErrorResume(this::buildErrorResponse);
         } catch (Exception e) {
             throw new StudentException(request.path() + "::" + e.getMessage());
         }     

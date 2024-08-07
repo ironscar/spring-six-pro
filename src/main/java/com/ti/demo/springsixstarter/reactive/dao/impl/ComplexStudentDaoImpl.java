@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ti.demo.domain.reactive.ComplexStudent;
 import com.ti.demo.domain.reactive.Greeting;
@@ -14,7 +14,7 @@ import com.ti.demo.springsixstarter.reactive.dao.ComplexStudentDao;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Service
+@Repository
 public class ComplexStudentDaoImpl implements ComplexStudentDao {
 
     private static final String FIRST_NAME = "first_name";
@@ -33,7 +33,7 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
             g.id g_id,
             g.message g_msg
         FROM student s
-        JOIN greeting g
+        LEFT JOIN greeting g
         ON s.id = g.student_id
     """;
 
@@ -84,6 +84,28 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
             .bufferUntilChanged(result -> result.get(ST_ID))
             .flatMap(row -> getComplexStudentMapping1(row))
             .singleOrEmpty();
+    }
+
+    @Override
+    public Mono<Long> saveGreetings(ComplexStudent student) {
+        // build query
+        String selectStub = null;
+        for (int i = 0 ; i < student.getGreetings().size() ; i++) {
+            selectStub = String.format(
+                "%s SELECT '%s' message, %d student_id FROM DUAL", 
+                selectStub != null ? selectStub + " UNION " : "", 
+                student.getGreetings().get(i).getMessage(), 
+                student.getId());
+        }
+        String insertStub = String.format("""
+            INSERT INTO greeting (message, student_id) 
+            SELECT * FROM (%s) new_greets
+            WHERE student_id in (
+                SELECT id FROM student WHERE id = %d
+            )""", selectStub, student.getId());
+
+        // run query
+        return dbClient.sql(insertStub).fetch().rowsUpdated();
     }
 
 }
