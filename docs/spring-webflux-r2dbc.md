@@ -1,7 +1,5 @@
 # Spring WebFlux R2DBC
 
-## R2DBC
-
 - R2DBC is the technology used to work with databases in reactive spring (as JDBC is in non-reactive)
 - We add the `spring-boot-starter-data-r2dbc` dependency to pom
 - In addition, we also need a driver for mysql compliant with R2DBC
@@ -18,7 +16,7 @@
 - POJO classes are defined similar to hibernate with annotations for table and columns
 - Repository classes are defined by extending from `R2dbcRepository<T, Integer>`
 
-### Quering alternatives
+## Quering alternatives
 
 - `R2dbcRepository` provides the following functionalities:
   - this provides a few methods like `find`, `save` etc
@@ -41,7 +39,7 @@
   - but the entire query needs to be specified as string which makes it hard to maintain
   - we can use multi-line strings with Java 17 as `""" <multiline string content here> """`
 
-### Joins
+## Joins
 
 - R2DBC is not an ORM and so doesn't support joins out of the box
 - When we add a new field which has no mapping in existing DAO implementations using out-of-the-box
@@ -61,15 +59,30 @@
   - we define mappings and query implementations in the same file like we do in MyBatis in the synchronous world
   - we don't need the annotations on the domain class anymore since we do our own mapping
 
-### Multi-inserts
+## Multi-inserts
 
 - We can use `DatabaseClient` to run the query and we can get `rowsUpdated()`
 - But all of the query-building has to be done by us manually
 - When we call the dao method for insert, we must add a `.subscribe()` else it doesn't work (as with `R2dbcRepository`)
 
-### Auth config
+## Connection pooling
 
-- auth config in R2DBC [TODO]
+- Connection pooling is to store and reuse connections instead of creating new ones every time
+- Using `spring-boot-starter-data-r2dbc` enables connection pooling by default
+- We can specifically turn it off by `spring.r2dbc.pool.enabled=false`
+- We can also configure the pool size: 
+  - initial: `spring.r2dbc.pool.initial-size=50`
+  - max: `spring.r2dbc.pool.max-size=100`
+- When enabled, R2DBC has high throughput and low response times, but also uses more memory and CPU
+- When disabled, it has the opposite effect
+
+## Auth config
+
+- R2DBC doesn't have JPA support and so doesn't have a setup to do authorizations via database
+- So we have to implement our own
+  - refer https://www.tomaszezula.com/spring-security-webflux-load-users-from-a-database/
+  - we create user and roles DAO and fetch it by user_id 
+  - need to convert this to UserDetails and hook up spring security to it [TODO]
 
 ---
 
