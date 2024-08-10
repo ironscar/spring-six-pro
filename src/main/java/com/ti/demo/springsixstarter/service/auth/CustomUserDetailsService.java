@@ -9,7 +9,7 @@ import com.ti.demo.springsixstarter.reactive.dao.UserDao;
 
 import reactor.core.publisher.Mono;
 
-@Service
+@Service("customUserDetailsService")
 public class CustomUserDetailsService implements ReactiveUserDetailsService {
 
     private UserDao userDao;

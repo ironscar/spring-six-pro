@@ -3,6 +3,7 @@ package com.ti.demo.springsixstarter.config;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,8 @@ import org.springframework.security.core.userdetails.MapReactiveUserDetailsServi
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
@@ -42,7 +45,7 @@ public class AppSecurityConfig {
      */
     @Bean
     @Autowired
-    public SecurityWebFilterChain filterChain(Environment env, ServerHttpSecurity http) {
+    private SecurityWebFilterChain filterChain(Environment env, ReactiveAuthenticationManager authenticationManager, ServerHttpSecurity http) {
         http
             .authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
@@ -56,7 +59,7 @@ public class AppSecurityConfig {
                 .anyExchange().authenticated());
 
         if (Arrays.asList(env.getActiveProfiles()).contains("custom-r2dbc-security")) {
-            http.authenticationManager(authenticationManager());
+            http.authenticationManager(authenticationManager);
         }
 
         return http.httpBasic(Customizer.withDefaults())
@@ -66,7 +69,7 @@ public class AppSecurityConfig {
 
     @Bean
     @Profile("memory-security")
-    public ReactiveUserDetailsService memoryUserDetailsService() {
+    private ReactiveUserDetailsService memoryUserDetailsService() {
         UserDetails user1 = User.builder().username("john").password("{noop}johnpass").roles(ROLE_STUDENT).build();
         UserDetails user2 = User.builder().username("amy").password("{noop}amypass").roles(ROLE_TEACHER).build();
         UserDetails user3 = User.builder().username("prince").password("{noop}princepass").roles(ROLE_TEACHER, ROLE_ADMIN).build();
@@ -74,11 +77,19 @@ public class AppSecurityConfig {
         return new MapReactiveUserDetailsService(user1, user2, user3, user4);
     }
 
+    @Bean
+    @Autowired
     @Profile("custom-r2dbc-security")
-    private ReactiveAuthenticationManager authenticationManager() {
-        ReactiveAuthenticationManager authenticationManager = UserDetailsRepositoryReactiveAuthenticationManager();
-        authenticationManager.setPasswordEncoder();
+    private ReactiveAuthenticationManager authenticationManager(
+        @Qualifier("customUserDetailsService") ReactiveUserDetailsService userDetailsService
+    ) {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+        authenticationManager.setPasswordEncoder(passwordEncoder());
         return authenticationManager;
+    }
+
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

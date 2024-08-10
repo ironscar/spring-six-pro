@@ -89,8 +89,7 @@
     - it has a single overridable method called `findByUsername` where we now use our custom user DAO
   - finally we have to update the `AppSecurityConfig` to use the custom user details service we create
   
-  
-- need to convert this to UserDetails and hook up spring security to it [TODO]
+- need to convert this to UserDetails and hook up spring security to it [TEST-SETUP]
 
 ---
 
