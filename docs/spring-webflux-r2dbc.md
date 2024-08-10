@@ -81,8 +81,16 @@
 - R2DBC doesn't have JPA support and so doesn't have a setup to do authorizations via database
 - So we have to implement our own
   - refer https://www.tomaszezula.com/spring-security-webflux-load-users-from-a-database/
-  - we create user and roles DAO and fetch it by user_id 
-  - need to convert this to UserDetails and hook up spring security to it [TODO]
+  - we create user and roles DAO and fetch it by user_id into the `CustomUser` class
+  - we then create a custom principal class that implements the `UserDetails` interface from spring security
+    - it takes the values it has from `CustomUser` class that we created
+    - we also define a constructor to get the principal object from the `CustomUser` object
+  - then we need to define a service that implements `ReactiveUserDetailsService` from Spring security
+    - it has a single overridable method called `findByUsername` where we now use our custom user DAO
+  - finally we have to update the `AppSecurityConfig` to use the custom user details service we create
+  
+  
+- need to convert this to UserDetails and hook up spring security to it [TODO]
 
 ---
 

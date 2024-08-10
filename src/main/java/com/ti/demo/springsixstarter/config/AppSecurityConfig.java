@@ -1,10 +1,16 @@
 package com.ti.demo.springsixstarter.config;
 
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
@@ -35,8 +41,9 @@ public class AppSecurityConfig {
      * @return - the security filter chain
      */
     @Bean
-    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
-        return http
+    @Autowired
+    public SecurityWebFilterChain filterChain(Environment env, ServerHttpSecurity http) {
+        http
             .authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
                 .pathMatchers(HttpMethod.GET, "/reactive/app3/greeting/client/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
@@ -46,8 +53,13 @@ public class AppSecurityConfig {
                 .pathMatchers(HttpMethod.POST, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.PUT, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_TEACHER, ROLE_ADMIN)
                 .pathMatchers(HttpMethod.DELETE, STUDENT_URL, STUDENT_URL + "/*").hasAnyRole(ROLE_ADMIN)
-                .anyExchange().authenticated())
-            .httpBasic(Customizer.withDefaults())
+                .anyExchange().authenticated());
+
+        if (Arrays.asList(env.getActiveProfiles()).contains("custom-r2dbc-security")) {
+            http.authenticationManager(authenticationManager());
+        }
+
+        return http.httpBasic(Customizer.withDefaults())
             .csrf(CsrfSpec::disable)
             .build();
     }
@@ -60,6 +72,13 @@ public class AppSecurityConfig {
         UserDetails user3 = User.builder().username("prince").password("{noop}princepass").roles(ROLE_TEACHER, ROLE_ADMIN).build();
         UserDetails user4 = User.builder().username(internalUser).password("{noop}" + internalPass).roles(ROLE_STUDENT, ROLE_TEACHER, ROLE_ADMIN).build();
         return new MapReactiveUserDetailsService(user1, user2, user3, user4);
+    }
+
+    @Profile("custom-r2dbc-security")
+    private ReactiveAuthenticationManager authenticationManager() {
+        ReactiveAuthenticationManager authenticationManager = UserDetailsRepositoryReactiveAuthenticationManager();
+        authenticationManager.setPasswordEncoder();
+        return authenticationManager;
     }
 
 }
