@@ -96,6 +96,7 @@
     - we need to first do `toString` on it and then do `Integer.parseInt`
     - trying to typecast directly to `(String)` is not the same as `toString`
     - we cannot cast it to `Long` and then get `int` from it either
+  - The above two caveats probably apply to all querying with `DatabaseClient`
   - The password in DB maybe stored with prefix `{bcrypt}` is using BCRYPT and similar setup to JDBC auth
     - that is not directly matched with `BCryptEncoder`
     - so we specifically store an `encoderType` based on the encoder used
