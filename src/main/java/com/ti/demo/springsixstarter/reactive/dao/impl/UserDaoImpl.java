@@ -24,8 +24,8 @@ public class UserDaoImpl implements UserDao {
         return Mono.just(CustomUser.builder()
             .userId((String) rows.get(0).get("user_id"))
             .password((String) rows.get(0).get("pwd"))
-            .enabled(Integer.parseInt((String) rows.get(0).get("enabled")) == 1)
-            .age(Integer.parseInt((String) rows.get(0).get("age")))
+            .enabled((Long) rows.get(0).get("enabled") == 1L)
+            .age(Integer.parseInt((rows.get(0).get("age")).toString()))
             .roles(rows.stream().map(row -> (String) row.get("role")).toList())
             .build());
     }
@@ -34,7 +34,7 @@ public class UserDaoImpl implements UserDao {
     public Mono<CustomUser> findByUserId(String userId) {
         return dbClient.sql("""
               SELECT 
-                u.user_id user_id,
+                u.userid user_id,
                 u.pwd pwd,
                 u.age,
                 CASE
@@ -44,8 +44,8 @@ public class UserDaoImpl implements UserDao {
                 CONCAT('ROLE_', a.role) role
             FROM custom_users u
             JOIN custom_authorities a
-            ON u.user_id = a.user_id
-            WHERE u.user_id = :userId
+            ON u.userid = a.userid
+            WHERE u.userid = :userId
         """)
         .bind("userId", userId)
         .fetch()

@@ -88,8 +88,16 @@
   - then we need to define a service that implements `ReactiveUserDetailsService` from Spring security
     - it has a single overridable method called `findByUsername` where we now use our custom user DAO
   - finally we have to update the `AppSecurityConfig` to use the custom user details service we create
+- Some caveats:
+  - If something is meant to be boolean but in query returns a numerical
+    - we can typecast it to `Long` and then check against a Long
+    - it cannot be casted to `Integer`
+  - If something is returning a numerical value
+    - we need to first do `toString` on it and then do `Integer.parseInt`
+    - trying to typecast directly to `(String)` is not the same as `toString`
+    - we cannot cast it to `Long` and then get `int` from it either
   
-- need to convert this to UserDetails and hook up spring security to it [TEST-SETUP]
+- it says password doesn't look like bcrypt [CHECK-ISSUES]
 
 ---
 

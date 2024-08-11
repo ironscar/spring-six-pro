@@ -45,7 +45,7 @@ public class AppSecurityConfig {
      */
     @Bean
     @Autowired
-    private SecurityWebFilterChain filterChain(Environment env, ReactiveAuthenticationManager authenticationManager, ServerHttpSecurity http) {
+    public SecurityWebFilterChain filterChain(Environment env, ReactiveAuthenticationManager authenticationManager, ServerHttpSecurity http) {
         http
             .authorizeExchange(exchange -> exchange
                 .pathMatchers(HttpMethod.GET, "/actuator", "/actuator/*").hasAnyRole(ROLE_ADMIN)
@@ -69,7 +69,7 @@ public class AppSecurityConfig {
 
     @Bean
     @Profile("memory-security")
-    private ReactiveUserDetailsService memoryUserDetailsService() {
+    public ReactiveUserDetailsService memoryUserDetailsService() {
         UserDetails user1 = User.builder().username("john").password("{noop}johnpass").roles(ROLE_STUDENT).build();
         UserDetails user2 = User.builder().username("amy").password("{noop}amypass").roles(ROLE_TEACHER).build();
         UserDetails user3 = User.builder().username("prince").password("{noop}princepass").roles(ROLE_TEACHER, ROLE_ADMIN).build();
@@ -80,7 +80,7 @@ public class AppSecurityConfig {
     @Bean
     @Autowired
     @Profile("custom-r2dbc-security")
-    private ReactiveAuthenticationManager authenticationManager(
+    public ReactiveAuthenticationManager authenticationManager(
         @Qualifier("customUserDetailsService") ReactiveUserDetailsService userDetailsService
     ) {
         UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
