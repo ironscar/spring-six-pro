@@ -11,6 +11,7 @@ The following was discovered as part of building this project:
   - `main/spring-aop` covers the basics of AOP in spring
   - `main/spring-webflux-basic` covers the basics of reactive spring
   - `main/spring-webflux-security` covers the basics of spring security in webflux
+  - `main/spring-webflux-r2dbc` covers the basics of using r2dbc for database access in reactive way with webflux
 
 ---
 
