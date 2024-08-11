@@ -7,6 +7,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 
 import com.ti.demo.domain.reactive.CustomUser;
+import com.ti.demo.springsixstarter.config.AppSecurityConfig;
 import com.ti.demo.springsixstarter.reactive.dao.UserDao;
 
 import reactor.core.publisher.Mono;
@@ -21,13 +22,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     private static Mono<CustomUser> getCustomUserMapping(List<Map<String, Object>> rows) {
-        return Mono.just(CustomUser.builder()
+        CustomUser u = CustomUser.builder()
             .userId((String) rows.get(0).get("user_id"))
-            .password((String) rows.get(0).get("pwd"))
+            .password(((String) rows.get(0).get("pwd")).replace(AppSecurityConfig.getEncoderType(), ""))
             .enabled((Long) rows.get(0).get("enabled") == 1L)
             .age(Integer.parseInt((rows.get(0).get("age")).toString()))
             .roles(rows.stream().map(row -> (String) row.get("role")).toList())
-            .build());
+            .build();
+
+        return Mono.just(u);
     }
 
     @Override

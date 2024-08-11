@@ -96,8 +96,10 @@
     - we need to first do `toString` on it and then do `Integer.parseInt`
     - trying to typecast directly to `(String)` is not the same as `toString`
     - we cannot cast it to `Long` and then get `int` from it either
-  
-- it says password doesn't look like bcrypt [CHECK-ISSUES]
+  - The password in DB maybe stored with prefix `{bcrypt}` is using BCRYPT and similar setup to JDBC auth
+    - that is not directly matched with `BCryptEncoder`
+    - so we specifically store an `encoderType` based on the encoder used
+    - then use this `encoderType` to remove the prefix from the encoded password so that it can match
 
 ---
 

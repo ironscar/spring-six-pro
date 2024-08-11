@@ -31,6 +31,8 @@ public class AppSecurityConfig {
     private static final String ROLE_ADMIN = "ADMIN";
     private static final String STUDENT_URL = "/reactive/app2/student";
 
+    private static String encoderType = null;
+
     @Value("${app.internal.user}")
     private String internalUser;
 
@@ -88,7 +90,15 @@ public class AppSecurityConfig {
         return authenticationManager;
     }
 
-    private PasswordEncoder passwordEncoder() {
+    public static String getEncoderType() {
+        return encoderType;
+    }
+
+    private static PasswordEncoder passwordEncoder() {
+        // used for removing prefix from encoded password stored in DB
+        AppSecurityConfig.encoderType = encoderType == null ? "{bcrypt}" : encoderType;
+
+        // return actual encoder object
         return new BCryptPasswordEncoder();
     }
 
