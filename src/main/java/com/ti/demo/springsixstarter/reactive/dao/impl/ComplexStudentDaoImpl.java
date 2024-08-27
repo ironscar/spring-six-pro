@@ -98,7 +98,7 @@ public class ComplexStudentDaoImpl implements ComplexStudentDao {
             student.getGreetings()
                 .stream()
                 .map(greeting -> String.format(
-                    "SELECT '%s' message, %d student_id FROM DUAL", 
+                    "SELECT '%s' message, %d student_id", 
                     greeting.getMessage(), 
                     student.getId())
                 ).reduce(null, (a, b) -> a == null 

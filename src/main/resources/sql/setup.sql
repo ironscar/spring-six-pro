@@ -133,8 +133,8 @@ insert into greeting (
     student_id
 ) 
 select* from (
-	select "Hello Again 1" message, 1 student_id from dual
+	select 'Hello Again 1' message, 4 student_id
 	union
-	select "Hello Again 2" message, 1 student_id from dual
+	select 'Hello Again 2' message, 4 student_id
 ) new_greets
-where student_id in (select id from student where id = 12);
+where student_id in (select id from student where id = 4);

@@ -18,6 +18,7 @@
     - first create a new database with default user
     - then connect to this new database with default user and create the new user with required privileges
     - then connect to the new database with the new user and do the rest
-- For R2DBC speciifcally, we have to update the `AppConfig` where we provide a timezone related config for MySQL
+  - Postgres also doesn't allow double quotes for strings so always use single-quotes
+- For R2DBC speciifcally, we have to update the `AppConfig` where we provide a timezone related config for MySQL [CHECK-ISSUES]
 
 ---
