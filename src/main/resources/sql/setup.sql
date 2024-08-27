@@ -1,64 +1,63 @@
--- ------------------------- CREATE USERS -------------------------------
-
--- drop user first if they exist
-DROP USER if exists 'springstudent'@'localhost' ;
+-- ------------------------- CREATE/DELETE USERS -------------------------------
 
 -- create user with proper privileges (for now all)
-CREATE USER 'springstudent'@'localhost' IDENTIFIED BY 'springstudent';
+create user springstudent with password 'springstudent';
 
 -- grant all privileges
-GRANT ALL PRIVILEGES ON * . * TO 'springstudent'@'localhost';
+grant all on schema public to springstudent;
+
+-- drop user
+reassign owned BY springstudent TO postgres;
+drop user if exists springstudent;
 
 -- ------------------------- CREATE DATABASES -------------------------------
 
--- create db is not exists
-CREATE DATABASE  IF NOT EXISTS `student_tracker`;
-USE `student_tracker`;
+-- create db
+CREATE DATABASE student_tracker;
 
 -- ------------------------- CREATE TABLES -------------------------------
 
 -- create first table: student
-CREATE TABLE student (
-  id int NOT NULL AUTO_INCREMENT,
-  first_name varchar(45) DEFAULT NULL,
-  last_name varchar(45) DEFAULT NULL,
-  email varchar(45) DEFAULT NULL,
-  PRIMARY KEY (id)
-) AUTO_INCREMENT=1;
+create table student (
+	id serial primary key,
+	first_name varchar(45) default null,
+	last_name varchar(45) default null,
+	email varchar(45) default null
+);
 
 -- create second table: greeting
 CREATE TABLE greeting (
-	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id serial PRIMARY KEY,
     message varchar(45) NOT NULL,
     student_id int NOT NULL,
     FOREIGN KEY(student_id) REFERENCES student(id)
-) AUTO_INCREMENT=1;
+);
 
 -- create users table for spring security
 CREATE TABLE users (
 	username varchar(50) not null primary key,
     password varchar(100) not null,
-    enabled tinyint not null
+    enabled int not null
 );
 
 CREATE TABLE authorities (
 	username varchar(50) not null,
     authority varchar(50) not null,
-    unique key authorities_idx_1 (username, authority),
+    unique(username, authority),
     foreign key (username) references users(username)
 );
 
 CREATE TABLE custom_users (
 	userid varchar(50) not null primary key,
     pwd varchar(100) not null,
-    age tinyint not null,
+    age int not null,
     enabled char(1) not null
 );
 
 CREATE TABLE custom_authorities (
 	userid varchar(50) not null references custom_users(userid),
     role varchar(50) not null,
-    unique key custom_role_idx (userid, role)
+    unique(userid, role)
 );
 
 -- ------------------------- INSERT DATA -------------------------------
@@ -107,9 +106,6 @@ drop table custom_users;
 
 -- select from student table
 select* from student;
-
--- select from greeting table
-select* from greeting;
 
 -- select from security tables
 select u.*, a.authority from users u join authorities a on u.username = a.username;
