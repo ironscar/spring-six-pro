@@ -9,9 +9,11 @@ The following was discovered as part of building this project:
   - `main/spring-web-mybatis` covers the basics of using mybatis with spring web for SQL queries
   - `main/spring-web-security` covers the basics of spring security for web
   - `main/spring-aop` covers the basics of AOP in spring
+  - `main/spring-aop-postgres` migrates the mysql database to postgres while using web, aop and mybatis
   - `main/spring-webflux-basic` covers the basics of reactive spring
   - `main/spring-webflux-security` covers the basics of spring security in webflux
   - `main/spring-webflux-r2dbc` covers the basics of using r2dbc for database access in reactive way with webflux
+  - `main/spring-webflux-r2dbc-postgres` migrates the mysql database to postgres while using webflux
 
 ---
 
