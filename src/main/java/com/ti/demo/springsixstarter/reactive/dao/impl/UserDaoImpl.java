@@ -25,7 +25,7 @@ public class UserDaoImpl implements UserDao {
         CustomUser u = CustomUser.builder()
             .userId((String) rows.get(0).get("user_id"))
             .password(((String) rows.get(0).get("pwd")).replace(AppSecurityConfig.getEncoderType(), ""))
-            .enabled((Long) rows.get(0).get("enabled") == 1L)
+            .enabled((Integer) rows.get(0).get("enabled") == 1)
             .age(Integer.parseInt((rows.get(0).get("age")).toString()))
             .roles(rows.stream().map(row -> (String) row.get("role")).toList())
             .build();

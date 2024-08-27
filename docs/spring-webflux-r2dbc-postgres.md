@@ -20,5 +20,6 @@
     - then connect to the new database with the new user and do the rest
   - Postgres also doesn't allow double quotes for strings so always use single-quotes
 - For R2DBC speciifcally, we have to update the `AppConfig` where we provide a timezone related config for MySQL [CHECK-ISSUES]
+- Multi-insert didn't work [CHECK-ISSUES]
 
 ---
