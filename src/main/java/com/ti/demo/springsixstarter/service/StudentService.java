@@ -75,7 +75,7 @@ public class StudentService {
             .bind("fname", updatedDetails.getFirstName())
             .bind("lname", updatedDetails.getLastName())
             .bind("email", updatedDetails.getEmail())
-            .bind("id", id.toString())
+            .bind("id", id)
             .fetch()
             .rowsUpdated()
             .flatMap(count -> {
