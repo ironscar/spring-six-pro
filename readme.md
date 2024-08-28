@@ -53,6 +53,8 @@ The following was discovered as part of building this project:
       - even after props are set, there is a connection link failure between the two VMs
         - we use the IP to test out first as VM may not know what domain it is and `/etc/hosts` was not editable in the docker container
         - IPs work but in a cloud native world, IPs can change so we should eventually try to make it work with domain names as well [TODO]
+  - We migrated to postgresql as a container
+    - Run `sudo docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgrespass -e PGDATA=/var/lib/postgresql/data/pgdata -v /datadir/postgresdb:/var/lib/postgresql/data --name postgresdb1 postgres:16.4-alpine3.20`
 
 ---
 

@@ -24,7 +24,7 @@ public class AppConfig {
     @Bean
     @Profile("test")
     public DataSource getTestDataSource(
-        @Value("jdbc:mysql://test-db") String url,
+        @Value("jdbc:postgresql://test-db") String url,
         @Value("test-user") String user,
         @Value("test-pass") String pass
     ) {
