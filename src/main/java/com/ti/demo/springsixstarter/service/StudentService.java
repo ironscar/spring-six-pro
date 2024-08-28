@@ -1,7 +1,9 @@
 package com.ti.demo.springsixstarter.service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +51,26 @@ public class StudentService {
         studentDao.update(studentId, updatedStudent);
     }
 
-    @ExecutionStatsCustomAspect
+    @Async
     @Transactional
-    public int updateLastNameInBulk(List<Integer> ids, String lname) {
-        return studentDao.updateLastNameInBulk(ids, lname);
+    @ExecutionStatsCustomAspect
+    public CompletableFuture<Integer> updateLastNameInBulk(List<Integer> ids, String lname) {
+        int count = studentDao.updateLastNameInBulk(ids, lname);
+        if (count == 0) {
+            throw new IllegalArgumentException("no last names got updated");
+        }
+        return CompletableFuture.completedFuture(count);
+    }
+
+    @Async
+    @Transactional
+    @ExecutionStatsCustomAspect
+    public CompletableFuture<Integer> updateFirstNameInBulk(List<Integer> ids, String fname) {
+        int count = studentDao.updateFirstNameInBulk(ids, fname);
+        if (count == 0) {
+            throw new IllegalArgumentException("no first names got updated");
+        }
+        return CompletableFuture.completedFuture(count);
     }
 
     @ExecutionStatsCustomAspect

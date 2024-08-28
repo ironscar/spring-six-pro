@@ -1,59 +1,55 @@
--- ------------------------- CREATE USERS -------------------------------
-
--- drop user first if they exist
-DROP USER if exists 'springstudent'@'%' ;
+-- ------------------------- CREATE/DELETE USERS -------------------------------
 
 -- create user with proper privileges (for now all)
-CREATE USER 'springstudent'@'%' IDENTIFIED BY 'springstudent';
+create user springstudent with password 'springstudent';
 
 -- grant all privileges
-GRANT ALL PRIVILEGES ON * . * TO 'springstudent'@'%';
+grant all on schema public to springstudent;
 
--- get all users in mysql server
-SELECT* from mysql.user;
+-- drop user
+reassign owned BY springstudent TO postgres;
+drop user if exists springstudent;
 
 -- ------------------------- CREATE DATABASES -------------------------------
 
--- create db is not exists
-CREATE DATABASE  IF NOT EXISTS `student_tracker`;
-USE `student_tracker`;
+-- create db
+CREATE DATABASE student_tracker;
 
 -- ------------------------- CREATE TABLES -------------------------------
 
 -- create first table: student
-CREATE TABLE `student` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `first_name`varchar(45) DEFAULT NULL,
-  `last_name` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+create table student (
+	id serial primary key,
+	first_name varchar(45) default null,
+	last_name varchar(45) default null,
+	email varchar(45) default null
+);
 
 -- create users table for spring security
 CREATE TABLE users (
 	username varchar(50) not null primary key,
     password varchar(100) not null,
-    enabled tinyint not null
+    enabled int not null
 );
 
 CREATE TABLE authorities (
 	username varchar(50) not null,
     authority varchar(50) not null,
-    unique key authorities_idx_1 (username, authority),
+    unique(username, authority),
     foreign key (username) references users(username)
 );
 
 CREATE TABLE custom_users (
 	userid varchar(50) not null primary key,
     pwd varchar(100) not null,
-    age tinyint not null,
+    age int not null,
     enabled char(1) not null
 );
 
 CREATE TABLE custom_authorities (
 	userid varchar(50) not null references custom_users(userid),
     role varchar(50) not null,
-    unique key custom_role_idx (userid, role)
+    unique(userid, role)
 );
 
 -- ------------------------- INSERT DATA -------------------------------
@@ -83,7 +79,7 @@ insert into custom_authorities (userid, role) values ('prince', 'ADMIN');
 
 -- ------------------------ CLEANUP ------------------------
 
-# to delete records if required from security tables
+-- to delete records if required from security tables
 delete from authorities where username in ('john', 'amy', 'prince');
 delete from users where username in ('john', 'amy', 'prince');
 drop table authorities;
@@ -101,6 +97,3 @@ select u.*, a.authority from users u join authorities a on u.username = a.userna
 
 -- select from custom security tables
 select u.userid, u.pwd, CASE WHEN u.enabled = 'Y' THEN 1 ELSE 0 END enabled, concat('ROLE_', a.role) role from custom_users u join custom_authorities a on u.userid = a.userid;
-
-
-

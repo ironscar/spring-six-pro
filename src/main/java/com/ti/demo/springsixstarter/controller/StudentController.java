@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ti.demo.domain.exception.StudentException;
 import com.ti.demo.domain.mybatis.xmlsql.Student;
+import com.ti.demo.springsixstarter.service.ComplexStudentService;
 import com.ti.demo.springsixstarter.service.StudentService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +35,16 @@ import lombok.extern.slf4j.Slf4j;
 public class StudentController {
 
     private StudentService studentService;
+    private ComplexStudentService css;
 
     /**
      * Method autowired by spring
      * 
      * @param ss - student service bean
      */
-    public StudentController(StudentService ss) {
+    public StudentController(StudentService ss, ComplexStudentService css) {
         studentService = ss;
+        this.css = css;
     }
 
     @GetMapping(value = {"", "/"})
@@ -125,6 +128,17 @@ public class StudentController {
             }
         } catch (Exception e) {
             throw new StudentException("Id must be a valid integer");
+        }
+    }
+
+    @PostMapping("/transync")
+    public int asyncTransactionOperation() throws InterruptedException {
+        try {
+            return css.asyncTransactionOperation();
+        } catch (InterruptedException e1) {
+            throw new InterruptedException("interrupted : " + e1.getMessage());
+        } catch (Exception e) {
+            throw new StudentException("Async transaction operation failed");
         }
     }
 
