@@ -172,6 +172,9 @@
 
 - Security setup sometimes doesn't work if you have a jar running inside a docker container
 - This happens due to external jars which can be found on system by default but not on docker image
+- WebClient doesn't automatically make parallel threads
+  - it is when its used with the router-handler setup when doing web client calls actually create new threads
+  - in a regular controller, this happens in a serial manner in the same thread
 - To address this, we add the following to `spring-boot-maven-plugin` in `pom.xml` plugins
 
 ```
